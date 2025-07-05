@@ -1,9 +1,14 @@
 from rest_framework import viewsets
-from .models import Task, ContextEntry, Category
-from .serializers import TaskSerializer, ContextEntrySerializer, CategorySerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Task, ContextEntry, Category, UserProfile
+from .serializers import TaskSerializer, ContextEntrySerializer, CategorySerializer, LoginSerializer, RegisterSerializer, ResetPasswordSerializer
+from .supabase_client import supabase
+from gotrue.errors import AuthApiError
 
 class TaskViewSet(viewsets.ModelViewSet):
-    queryset = Task.objects.all()
+    queryset = Task.objects.all()   
     serializer_class = TaskSerializer
 
 class ContextEntryViewSet(viewsets.ModelViewSet):
@@ -13,3 +18,108 @@ class ContextEntryViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+class RegisterView(APIView):
+    def post(self, request):
+        ser = RegisterSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        data = ser.validated_data
+
+        try:
+            res = supabase.auth.sign_up({
+                "email":    data["email"],
+                "password": data["password"]
+            })
+            # If sign_up fails, AuthApiError is raised.
+            # If it succeeds but no user object, treat as error
+            if not getattr(res, "user", None):
+                return Response(
+                    {"detail": "Registration failed: no user returned."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            uid = res.user.id
+
+            UserProfile.objects.create(
+                supabase_uid=uid,
+                username=data["username"],
+                email=data["email"]
+            )
+            return Response(
+                {"message": "User registered successfully."},
+                status=status.HTTP_201_CREATED
+            )
+
+        except AuthApiError as e:
+            return Response(
+                {"detail": e.message},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                {"detail": f"Unexpected error: {e}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class LoginView(APIView):
+    def post(self, request):
+        ser = LoginSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        data = ser.validated_data
+
+        try:
+            res = supabase.auth.sign_in_with_password({
+                "email":    data["email"],
+                "password": data["password"]
+            })
+            # No exception? Check for session
+            session = getattr(res, "session", None)
+            if not session:
+                return Response(
+                    {"detail": "Login failed: invalid credentials."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            return Response({
+                "access_token":  session.access_token,
+                "refresh_token": session.refresh_token,
+                "user":          res.user
+            }, status=status.HTTP_200_OK)
+
+        except AuthApiError as e:
+            return Response(
+                {"detail": e.message},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                {"detail": f"Unexpected error: {e}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class ResetPasswordView(APIView):
+    def post(self, request):
+        ser = ResetPasswordSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        email = ser.validated_data["email"]
+
+        try:
+            res = supabase.auth.reset_password_email(email)
+            # If no exception, assume email sent
+            return Response(
+                {"message": "Password reset email sent."},
+                status=status.HTTP_200_OK
+            )
+
+        except AuthApiError as e:
+            return Response(
+                {"detail": e.message},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                {"detail": f"Unexpected error: {e}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

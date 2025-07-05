@@ -32,3 +32,9 @@ class Task(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class UserProfile(models.Model):
+    supabase_uid = models.CharField(max_length=128, unique=True)
+    username = models.CharField(max_length=50, unique=True)
+    email = models.EmailField(unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
