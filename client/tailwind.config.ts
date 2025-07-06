@@ -20,6 +20,15 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
+        // Custom color palette
+        'deep-plum': '#674b74',
+        'rich-mauve': '#856287',
+        'soft-mauve': '#a17995',
+        'dusty-rose': '#b995a2',
+        'warm-beige': '#d0b2b1',
+        'cream-blush': '#dbcbc1',
+        
+        // Semantic color mappings
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

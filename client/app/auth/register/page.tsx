@@ -88,28 +88,28 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pale-oat via-dusty-blush to-rose-fog flex items-center justify-center p-4">
-      <Card ref={cardRef} className="w-full max-w-md bg-white/90 border-dusty-blush">
+    <div className="min-h-screen bg-gradient-to-br from-cream-blush via-warm-beige to-dusty-rose flex items-center justify-center p-4">
+      <Card ref={cardRef} className="w-full max-w-md bg-white/90 border-warm-beige shadow-lg">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="h-10 w-10 bg-gradient-to-br from-plum-twilight to-deep-mauve rounded-lg flex items-center justify-center">
-              <CheckSquare className="h-6 w-6 text-pale-oat" />
+            <div className="h-10 w-10 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-lg flex items-center justify-center">
+              <CheckSquare className="h-6 w-6 text-cream-blush" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-deep-mauve">NotSoSmart</h1>
+              <h1 className="text-xl font-bold text-deep-plum">NotSoSmart</h1>
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold text-deep-mauve">Create Account</CardTitle>
-          <CardDescription className="text-mist-gray">
+          <CardTitle className="text-2xl font-bold text-deep-plum">Create Account</CardTitle>
+          <CardDescription className="text-rich-mauve">
             Join NotSoSmart to manage your tasks intelligently
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-deep-mauve">Username</Label>
+              <Label htmlFor="username" className="text-deep-plum">Username</Label>
               <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-mist-gray" />
+                <User className="absolute left-3 top-3 h-4 w-4 text-rich-mauve" />
                 <Input
                   id="username"
                   name="username"
@@ -117,7 +117,7 @@ export default function RegisterPage() {
                   value={formData.username}
                   onChange={handleInputChange}
                   placeholder="Enter your username"
-                  className="pl-10 border-dusty-blush focus:border-plum-twilight focus:ring-plum-twilight"
+                  className="pl-10 border-warm-beige focus:border-rich-mauve focus:ring-rich-mauve"
                   required
                   disabled={isLoading || authLoading}
                 />
@@ -125,9 +125,9 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-deep-mauve">Email</Label>
+              <Label htmlFor="email" className="text-deep-plum">Email</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-mist-gray" />
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-rich-mauve" />
                 <Input
                   id="email"
                   name="email"
@@ -135,7 +135,7 @@ export default function RegisterPage() {
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="Enter your email"
-                  className="pl-10 border-dusty-blush focus:border-plum-twilight focus:ring-plum-twilight"
+                  className="pl-10 border-warm-beige focus:border-rich-mauve focus:ring-rich-mauve"
                   required
                   disabled={isLoading || authLoading}
                 />
@@ -143,9 +143,9 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-deep-mauve">Password</Label>
+              <Label htmlFor="password" className="text-deep-plum">Password</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-mist-gray" />
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-rich-mauve" />
                 <Input
                   id="password"
                   name="password"
@@ -153,7 +153,7 @@ export default function RegisterPage() {
                   value={formData.password}
                   onChange={handleInputChange}
                   placeholder="Create a password"
-                  className="pl-10 border-dusty-blush focus:border-plum-twilight focus:ring-plum-twilight"
+                  className="pl-10 border-warm-beige focus:border-rich-mauve focus:ring-rich-mauve"
                   required
                   minLength={6}
                   disabled={isLoading || authLoading}
@@ -162,9 +162,9 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="text-deep-mauve">Confirm Password</Label>
+              <Label htmlFor="confirmPassword" className="text-deep-plum">Confirm Password</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-mist-gray" />
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-rich-mauve" />
                 <Input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -172,7 +172,7 @@ export default function RegisterPage() {
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
                   placeholder="Confirm your password"
-                  className="pl-10 border-dusty-blush focus:border-plum-twilight focus:ring-plum-twilight"
+                  className="pl-10 border-warm-beige focus:border-rich-mauve focus:ring-rich-mauve"
                   required
                   disabled={isLoading || authLoading}
                 />
@@ -181,7 +181,7 @@ export default function RegisterPage() {
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-plum-twilight to-deep-mauve hover:from-deep-mauve hover:to-plum-twilight text-pale-oat"
+              className="w-full bg-gradient-to-r from-rich-mauve to-deep-plum hover:from-deep-plum hover:to-rich-mauve text-cream-blush"
               disabled={isLoading || authLoading}
             >
               {isLoading ? (
@@ -195,8 +195,8 @@ export default function RegisterPage() {
             </Button>
 
             <div className="text-center text-sm">
-              <span className="text-mist-gray">Already have an account? </span>
-              <Link href="/auth/login" className="text-plum-twilight hover:text-ash-lilac font-medium">
+              <span className="text-rich-mauve">Already have an account? </span>
+              <Link href="/auth/login" className="text-deep-plum hover:text-soft-mauve font-medium transition-colors">
                 Sign in
               </Link>
             </div>
