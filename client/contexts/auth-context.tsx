@@ -18,7 +18,6 @@ import authService, {
   RegisterRequest,
   ResetPasswordRequest,
 } from '@/services/auth-service';
-import { Loader } from 'lucide-react';
 
 export interface AuthUser {
   id: number;
@@ -39,7 +38,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  loading: false,
+  loading: true, // Start with loading true
   error: null,
   isAuthenticated: false,
   login: async () => {},
@@ -52,19 +51,55 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const dispatch = useDispatch();
-  const router = useRouter();  // ← use Next.js router
+  const router = useRouter();
   const { user, accessToken } = useSelector((state: RootState) => state.auth);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Start with loading true
   const [error, setError] = useState<Error | null>(null);
-  const [hydrated, setHydrated] = useState(false);
 
   // auto‑logout on inactivity
   useIdleTimer();
 
-  // mark ready
+  // Check for existing auth on mount
   useEffect(() => {
-    setHydrated(true);
-  }, []);
+    const checkExistingAuth = async () => {
+      try {
+        // Check if we have a token in Redux store
+        if (accessToken && user) {
+          setLoading(false);
+          return;
+        }
+
+        // Check for token in cookies or localStorage as fallback
+        const token = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('authToken='))
+          ?.split('=')[1];
+
+        if (token) {
+          // Validate token with backend
+          try {
+            const response = await axios.get('/api/auth/user/', {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            
+            if (response.data) {
+              dispatch(setUser(response.data));
+              dispatch(setAccessToken(token));
+            }
+          } catch (err) {
+            // Token is invalid, clear it
+            document.cookie = 'authToken=; Max-Age=0; path=/;';
+          }
+        }
+      } catch (err) {
+        console.error('Auth check error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkExistingAuth();
+  }, [dispatch, accessToken, user]);
 
   // attach token to axios
   useEffect(() => {
@@ -94,6 +129,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           })
         );
         dispatch(setAccessToken(token));
+        
+        // Redirect to dashboard after successful login
+        router.push('/dashboard');
       } catch (err: any) {
         setError(err);
         throw err;
@@ -101,7 +139,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(false);
       }
     },
-    [dispatch]
+    [dispatch, router]
   );
 
   const logout = useCallback(async () => {
@@ -112,7 +150,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('Sign‑out error:', err);
     } finally {
       dispatch(logoutAction());
-      router.push('/login');    // ← redirect using Next.js
+      router.push('/');
       setLoading(false);
     }
   }, [dispatch, router]);
@@ -150,10 +188,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 
   const isAuthenticated = Boolean(user && accessToken);
-
-  if (!hydrated) {
-    return <Loader />;
-  }
 
   return (
     <AuthContext.Provider

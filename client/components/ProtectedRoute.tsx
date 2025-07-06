@@ -9,22 +9,31 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, loading, error } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    // Only check once auth-context is done loading
+    // Don't redirect while still loading
     if (loading) return;
 
-    if (!isAuthenticated) {
-      // Skip redirect on landing or auth pages
-      if (pathname !== '/' && !pathname.startsWith('/auth')) {
-        router.push('/');
-      }
+    const isAuthPage = pathname.startsWith('/auth');
+    const isRootPage = pathname === '/';
+
+    // If not authenticated and trying to access protected routes
+    if (!isAuthenticated && !isAuthPage && !isRootPage) {
+      router.push('/');
+      return;
+    }
+
+    // If authenticated and on auth pages, redirect to dashboard
+    if (isAuthenticated && isAuthPage) {
+      router.push('/dashboard');
+      return;
     }
   }, [isAuthenticated, loading, router, pathname]);
 
+  // Show loading while auth is being determined
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pale-oat via-dusty-blush to-rose-fog flex items-center justify-center">
@@ -34,11 +43,6 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
         </div>
       </div>
     );
-  }
-
-  // If still not authed, render nothing (we already navigated away)
-  if (!isAuthenticated && pathname !== '/' && !pathname.startsWith('/auth')) {
-    return null;
   }
 
   return <>{children}</>;

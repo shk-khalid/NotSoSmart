@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/auth-context';
 import { Task, Category, FilterOptions, TaskStatus } from '@/types';
 import { TaskCard } from '@/components/TaskCard';
 import { FilterBar } from '@/components/FilterBar';
@@ -13,6 +15,8 @@ import Link from 'next/link';
 import { gsap } from 'gsap';
 
 export default function Dashboard() {
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [filters, setFilters] = useState<FilterOptions>({
@@ -27,8 +31,17 @@ export default function Dashboard() {
   const statsRef = useRef<HTMLDivElement>(null);
   const tasksRef = useRef<HTMLDivElement>(null);
 
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/');
+    }
+  }, [isAuthenticated, authLoading, router]);
+
   // Load mock data
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     const loadData = async () => {
       try {
         setError(null);
@@ -45,7 +58,7 @@ export default function Dashboard() {
     };
 
     loadData();
-  }, []);
+  }, [isAuthenticated]);
 
   // GSAP animations
   useEffect(() => {
@@ -68,6 +81,18 @@ export default function Dashboard() {
       );
     }
   }, [loading]);
+
+  // Don't render if not authenticated
+  if (authLoading || !isAuthenticated) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-plum-twilight mx-auto mb-4"></div>
+          <p className="text-mist-gray">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Filter tasks based on current filters
   const filteredTasks = tasks.filter(task => {
@@ -97,7 +122,7 @@ export default function Dashboard() {
 
   const handleTaskEdit = (task: Task) => {
     // Navigate to edit page
-    window.location.href = `/tasks/edit/${task.id}`;
+    router.push(`/tasks/edit/${task.id}`);
   };
 
   const handleTaskDelete = async (id: number) => {

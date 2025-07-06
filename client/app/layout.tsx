@@ -15,22 +15,36 @@ const inter = Inter({ subsets: ['latin'] });
 
 function AppContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   
+  // Don't show navigation on auth pages or landing page when not authenticated
   const isAuthPage = pathname?.startsWith('/auth');
   const isLandingPage = pathname === '/' && !isAuthenticated;
+  const shouldShowNavigation = !isAuthPage && !isLandingPage && isAuthenticated;
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pale-oat via-dusty-blush to-rose-fog flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-plum-twilight mx-auto mb-4"></div>
+          <p className="text-mist-gray">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <ProtectedRoute>
-      {isAuthPage || isLandingPage ? (
-        children
-      ) : (
+      {shouldShowNavigation ? (
         <div className="min-h-screen bg-gradient-to-br from-pale-oat via-dusty-blush to-rose-fog">
           <Navigation />
           <main className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8 max-w-7xl">
             {children}
           </main>
         </div>
+      ) : (
+        children
       )}
     </ProtectedRoute>
   );
