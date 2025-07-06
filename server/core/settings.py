@@ -100,3 +100,6 @@ STATIC_URL = 'static/'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Huggingface API
+HF_API_KEY = os.getenv("HF_API_KEY")
