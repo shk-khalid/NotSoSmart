@@ -2,82 +2,102 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
+/*──────────────────────────────────────────────────────────────────────────────
+  1) Semantic CSS variables for light & dark
+──────────────────────────────────────────────────────────────────────────────*/
 @layer base {
+  /* — Light mode — */
   :root {
-    --background: 219 203 193; /* cream-blush */
-    --foreground: 103 75 116; /* deep-plum */
-    --card: 255 255 255;
-    --card-foreground: 103 75 116; /* deep-plum */
-    --popover: 255 255 255;
-    --popover-foreground: 103 75 116; /* deep-plum */
-    --primary: 133 98 135; /* rich-mauve */
-    --primary-foreground: 255 255 255;
-    --secondary: 208 178 177; /* warm-beige */
-    --secondary-foreground: 103 75 116; /* deep-plum */
-    --muted: 208 178 177; /* warm-beige */
-    --muted-foreground: 133 98 135; /* rich-mauve */
-    --accent: 185 149 162; /* dusty-rose */
-    --accent-foreground: 103 75 116; /* deep-plum */
-    --destructive: 239 68 68;
-    --destructive-foreground: 255 255 255;
-    --border: 208 178 177; /* warm-beige */
-    --input: 208 178 177; /* warm-beige */
-    --ring: 133 98 135; /* rich-mauve */
-    --chart-1: 133 98 135; /* rich-mauve */
-    --chart-2: 161 121 149; /* soft-mauve */
-    --chart-3: 185 149 162; /* dusty-rose */
-    --chart-4: 208 178 177; /* warm-beige */
-    --chart-5: 219 203 193; /* cream-blush */
+    /* your cream-blush / deep-plum palette as RGB triplets (for use with rgb()) */
+    --background-rgb:     219, 203, 193;  /* cream-blush */
+    --foreground-rgb:     103,  75, 116;  /* deep-plum */
+    --card-rgb:           255, 255, 255;
+    --card-foreground-rgb:103,  75, 116;
+    --popover-rgb:        255, 255, 255;
+    --popover-foreground-rgb:103,75,116;
+
+    --primary-rgb:        133,  98, 135;  /* rich-mauve */
+    --primary-foreground-rgb:255,255,255;
+    --secondary-rgb:      208, 178, 177;  /* warm-beige */
+    --secondary-foreground-rgb:103,75,116;
+
+    --muted-rgb:          208, 178, 177;  /* warm-beige */
+    --muted-foreground-rgb:133, 98, 135;  /* rich-mauve */
+    --accent-rgb:         185, 149, 162;  /* dusty-rose */
+    --accent-foreground-rgb:103,75,116;
+
+    --destructive-rgb:    239,  68,  68;
+    --destructive-foreground-rgb:255,255,255;
+
+    --border-rgb:         208, 178, 177;
+    --input-rgb:          208, 178, 177;
+    --ring-rgb:           133,  98, 135;
+
+    /* small radius for all your components */
     --radius: 0.5rem;
   }
-  .dark {
-    --background: 103 75 116; /* deep-plum */
-    --foreground: 219 203 193; /* cream-blush */
-    --card: 133 98 135; /* rich-mauve */
-    --card-foreground: 219 203 193; /* cream-blush */
-    --popover: 133 98 135; /* rich-mauve */
-    --popover-foreground: 219 203 193; /* cream-blush */
-    --primary: 185 149 162; /* dusty-rose */
-    --primary-foreground: 103 75 116; /* deep-plum */
-    --secondary: 161 121 149; /* soft-mauve */
-    --secondary-foreground: 219 203 193; /* cream-blush */
-    --muted: 161 121 149; /* soft-mauve */
-    --muted-foreground: 208 178 177; /* warm-beige */
-    --accent: 185 149 162; /* dusty-rose */
-    --accent-foreground: 103 75 116; /* deep-plum */
-    --destructive: 220 38 127;
-    --destructive-foreground: 219 203 193; /* cream-blush */
-    --border: 161 121 149; /* soft-mauve */
-    --input: 161 121 149; /* soft-mauve */
-    --ring: 185 149 162; /* dusty-rose */
-    --chart-1: 185 149 162; /* dusty-rose */
-    --chart-2: 208 178 177; /* warm-beige */
-    --chart-3: 219 203 193; /* cream-blush */
-    --chart-4: 161 121 149; /* soft-mauve */
-    --chart-5: 133 98 135; /* rich-mauve */
-  }
-}
 
-@layer base {
+  /* — Dark mode — */
+  :root.dark {
+    --background-rgb:     103,  75, 116;
+    --foreground-rgb:     219, 203, 193;
+    --card-rgb:           133,  98, 135;
+    --card-foreground-rgb:219,203,193;
+    --popover-rgb:        133,  98, 135;
+    --popover-foreground-rgb:219,203,193;
+
+    --primary-rgb:        185, 149, 162;  /* dusty-rose */
+    --primary-foreground-rgb:103, 75, 116;
+    --secondary-rgb:      161, 121, 149;  /* soft-mauve */
+    --secondary-foreground-rgb:219,203,193;
+
+    --muted-rgb:          161, 121, 149;
+    --muted-foreground-rgb:208,178,177;
+    --accent-rgb:         185, 149, 162;
+    --accent-foreground-rgb:103,75,116;
+
+    --destructive-rgb:    220,  38, 127;
+    --destructive-foreground-rgb:219,203,193;
+
+    --border-rgb:         161, 121, 149;
+    --input-rgb:          161, 121, 149;
+    --ring-rgb:           185, 149, 162;
+  }
+
+  /* now wire Tailwind’s semantic names to these RGB variables: */
   * {
-    @apply border-border;
+    @apply border-[rgb(var(--border-rgb))];
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[rgb(var(--background-rgb))] text-[rgb(var(--foreground-rgb))];
+  }
+  /* cards & popovers */
+  .card {
+    @apply bg-[rgb(var(--card-rgb))] text-[rgb(var(--card-foreground-rgb))];
+  }
+  .popover {
+    @apply bg-[rgb(var(--popover-rgb))] text-[rgb(var(--popover-foreground-rgb))];
+  }
+
+  /* buttons, etc */
+  .btn-primary {
+    @apply bg-[rgb(var(--primary-rgb))] text-[rgb(var(--primary-foreground-rgb))];
+  }
+  .btn-secondary {
+    @apply bg-[rgb(var(--secondary-rgb))] text-[rgb(var(--secondary-foreground-rgb))];
+  }
+  .btn-accent {
+    @apply bg-[rgb(var(--accent-rgb))] text-[rgb(var(--accent-foreground-rgb))];
+  }
+  .btn-destructive {
+    @apply bg-[rgb(var(--destructive-rgb))] text-[rgb(var(--destructive-foreground-rgb))];
+  }
+  /* form inputs, focus rings, etc */
+  input {
+    @apply bg-[rgb(var(--input-rgb))] border-[rgb(var(--border-rgb))];
+  }
+  .ring-focus {
+    @apply ring-[rgb(var(--ring-rgb))];
   }
 }
 

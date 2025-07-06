@@ -20,7 +20,6 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
-        // Custom color palette
         'deep-plum': '#674b74',
         'rich-mauve': '#856287',
         'soft-mauve': '#a17995',

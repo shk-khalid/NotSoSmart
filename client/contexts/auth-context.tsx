@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.tsx
 'use client';
 
 import React, {
@@ -11,12 +10,18 @@ import React, {
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { setUser, setAccessToken, logout as logoutAction } from '@/store/slices/auth-slice';
+import {
+  setUser,
+  setAccessToken,
+  logout as logoutAction,
+} from '@/store/slices/auth-slice';
 import { RootState } from '@/store';
 import { useIdleTimer } from '@/hooks/use-idle-timer';
 import authService, {
   RegisterRequest,
+  RegisterResponse,
   ResetPasswordRequest,
+  ResetPasswordResponse,
 } from '@/services/auth-service';
 
 export interface AuthUser {
@@ -32,8 +37,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  register: (data: RegisterRequest) => Promise<void>;
-  resetPassword: (data: ResetPasswordRequest) => Promise<void>;
+  register: (data: RegisterRequest) => Promise<RegisterResponse>;
+  resetPassword: (data: ResetPasswordRequest) => Promise<ResetPasswordResponse>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -43,13 +48,21 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   login: async () => {},
   logout: async () => {},
-  register: async () => {},
-  resetPassword: async () => {},
+  register: async () => {
+    // stub
+    return {} as RegisterResponse;
+  },
+  resetPassword: async () => {
+    // stub
+    return {} as ResetPasswordResponse;
+  },
 });
 
 export const useAuth = () => useContext(AuthContext);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { user, accessToken } = useSelector((state: RootState) => state.auth);
@@ -63,30 +76,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const checkExistingAuth = async () => {
       try {
-        // Check if we have a token in Redux store
         if (accessToken && user) {
           setLoading(false);
           return;
         }
 
-        // Check for token in localStorage or cookies as fallback
-        let token = localStorage.getItem('access_token');
-        
+        // Force token to string|null
+        let token: string | null = localStorage.getItem('access_token');
         if (!token) {
-          token = document.cookie
+          const match = document.cookie
             .split('; ')
-            .find(row => row.startsWith('authToken='))
+            .find((row) => row.startsWith('authToken='))
             ?.split('=')[1];
+          token = match ?? null;
         }
 
         if (token) {
-          // For now, just set the token without validating
-          // In a real app, you'd validate with the backend
           dispatch(setAccessToken(token));
-          
-          // You could also try to get user info here
-          // const userInfo = await getUserInfo(token);
-          // dispatch(setUser(userInfo));
+          // Optionally fetch user info here
         }
       } catch (err) {
         console.error('Auth check error:', err);
@@ -98,7 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkExistingAuth();
   }, [dispatch, accessToken, user]);
 
-  // attach token to axios
+  // Attach token to axios
   useEffect(() => {
     if (accessToken) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
@@ -113,9 +120,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setError(null);
       try {
         const data = await authService.login({ email, password });
-        
-        console.log('Login response:', data); // Debug log
-        
+
         const {
           access_token: token,
           user: { id, email: userEmail, username },
@@ -123,14 +128,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         dispatch(
           setUser({
-            id: id, // Keep as string since Supabase uses string IDs
+            id,
             username,
             email: userEmail,
           })
         );
         dispatch(setAccessToken(token));
-        
-        // Redirect to dashboard after successful login
+
         router.push('/dashboard');
       } catch (err: any) {
         console.error('Login error in context:', err);
@@ -157,7 +161,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [dispatch, router]);
 
   const register = useCallback(
-    async (data: RegisterRequest) => {
+    async (data: RegisterRequest): Promise<RegisterResponse> => {
       setError(null);
       try {
         const response = await authService.register(data);
@@ -171,7 +175,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 
   const resetPassword = useCallback(
-    async (data: ResetPasswordRequest) => {
+    async (data: ResetPasswordRequest): Promise<ResetPasswordResponse> => {
       setError(null);
       try {
         const response = await authService.resetPassword(data);
