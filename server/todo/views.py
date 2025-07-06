@@ -3,7 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Task, ContextEntry, Category, UserProfile
-from .serializers import TaskSerializer, ContextEntrySerializer, CategorySerializer, LoginSerializer, RegisterSerializer, ResetPasswordSerializer
+from .serializers import TaskSerializer, ContextEntrySerializer, CategorySerializer, LoginSerializer, RegisterSerializer, ResetPasswordSerializer, CategorizeSerializer
+from .utils import suggest_category
 from .supabase_client import supabase
 from gotrue.errors import AuthApiError
 
@@ -123,3 +124,15 @@ class ResetPasswordView(APIView):
                 {"detail": f"Unexpected error: {e}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+            
+class CategorizeView(APIView):
+    def post(self, request):
+        ser = CategorizeSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        data = ser.validated_data
+        
+        suggested = suggest_category(
+            data["title"],
+            data["description"]
+        )
+        return Response({"suggested_category": suggested}, status=status.HTTP_200_OK)
