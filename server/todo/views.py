@@ -92,29 +92,42 @@ class LoginView(APIView):
             refresh_token = session.refresh_token
             expires_in    = session.expires_in  # seconds until expiry, if available
 
-            # Build response
+            # Get user profile from local DB
+            try:
+                user_profile = UserProfile.objects.get(supabase_uid=res.user.id)
+            except UserProfile.DoesNotExist:
+                return Response(
+                    {"detail": "User profile not found."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Build response with the expected format
             resp = Response({
-                "user": res.user
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+                "user": {
+                    "id": user_profile.id,
+                    "username": user_profile.username,
+                    "email": user_profile.email
+                }
             }, status=status.HTTP_200_OK)
 
-            # Set HttpOnly cookies
-            # Access token cookie (short‑lived)
+            # Set HttpOnly cookies as backup
             resp.set_cookie(
-                key="access_token",
+                key="authToken",
                 value=access_token,
                 httponly=True,
                 secure=not settings.DEBUG,
                 samesite="Lax",
-                max_age=expires_in or 3600  # fallback to 1 hour
+                max_age=expires_in or 3600
             )
-            # Refresh token cookie (longer‑lived)
             resp.set_cookie(
                 key="refresh_token",
                 value=refresh_token,
                 httponly=True,
                 secure=not settings.DEBUG,
                 samesite="Lax",
-                max_age=90 * 24 * 3600  # e.g. 90 days
+                max_age=90 * 24 * 3600
             )
 
             return resp
@@ -191,5 +204,3 @@ class AISuggestionView(APIView):
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
