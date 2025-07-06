@@ -1,101 +1,157 @@
 import { Task, Category, ContextEntry, AISuggestionInput, AISuggestionResponse, TaskStatus } from '@/types';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
 // Base URL for API - in production, this would come from environment variables
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+interface AuthResponse {
+  user: {
+    id: number;
+    username: string;
+    email: string;
+  };
+  access_token: string;
+  refresh_token: string;
+}
+
+interface RefreshResponse {
+  access_token: string;
+  refresh_token?: string;
+}
+
 class ApiClient {
-  private baseURL: string;
+  private client: AxiosInstance;
 
   constructor(baseURL: string) {
-    this.baseURL = baseURL;
-  }
-
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
-    const url = `${this.baseURL}${endpoint}`;
-    const config: RequestInit = {
+    this.client = axios.create({
+      baseURL,
       headers: {
         'Content-Type': 'application/json',
-        ...options.headers,
       },
-      ...options,
-    };
+      withCredentials: true,
+    });
 
-    try {
-      const response = await fetch(url, config);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    // Request interceptor to add auth token
+    this.client.interceptors.request.use(
+      (config) => {
+        const token = localStorage.getItem('access_token');
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
+
+    // Response interceptor to handle token refresh
+    this.client.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const originalRequest = error.config;
+
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+
+          try {
+            const refreshToken = localStorage.getItem('refresh_token');
+            if (refreshToken) {
+              const response = await this.refreshToken(refreshToken);
+              localStorage.setItem('access_token', response.access_token);
+              
+              // Retry original request with new token
+              originalRequest.headers.Authorization = `Bearer ${response.access_token}`;
+              return this.client(originalRequest);
+            }
+          } catch (refreshError) {
+            // Refresh failed, redirect to login
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            window.location.href = '/auth/login';
+          }
+        }
+
+        return Promise.reject(error);
       }
+    );
+  }
 
-      return await response.json();
-    } catch (error) {
-      console.error('API request failed:', error);
-      throw error;
-    }
+  // Auth methods
+  async register(userData: { username: string; email: string; password: string }): Promise<{ message: string }> {
+    const response = await this.client.post('/api/auth/register/', userData);
+    return response.data;
+  }
+
+  async login(credentials: { email: string; password: string }): Promise<AuthResponse> {
+    const response = await this.client.post('/api/auth/login/', credentials);
+    return response.data;
+  }
+
+  async resetPassword(email: string): Promise<{ message: string }> {
+    const response = await this.client.post('/api/auth/reset-password/', { email });
+    return response.data;
+  }
+
+  async refreshToken(refreshToken: string): Promise<RefreshResponse> {
+    const response = await this.client.post('/api/auth/refresh/', { refresh_token: refreshToken });
+    return response.data;
+  }
+
+  async getCurrentUser(): Promise<{ id: number; username: string; email: string }> {
+    const response = await this.client.get('/api/auth/user/');
+    return response.data;
   }
 
   // Task API methods
   async getTasks(): Promise<Task[]> {
-    return this.request<Task[]>('/api/tasks/');
+    const response = await this.client.get('/api/tasks/');
+    return response.data;
   }
 
   async getTask(id: number): Promise<Task> {
-    return this.request<Task>(`/api/tasks/${id}/`);
+    const response = await this.client.get(`/api/tasks/${id}/`);
+    return response.data;
   }
 
   async createTask(task: Omit<Task, 'id' | 'created_at' | 'updated_at'>): Promise<Task> {
-    return this.request<Task>('/api/tasks/', {
-      method: 'POST',
-      body: JSON.stringify(task),
-    });
+    const response = await this.client.post('/api/tasks/', task);
+    return response.data;
   }
 
   async updateTask(id: number, task: Partial<Task>): Promise<Task> {
-    return this.request<Task>(`/api/tasks/${id}/`, {
-      method: 'PUT',
-      body: JSON.stringify(task),
-    });
+    const response = await this.client.put(`/api/tasks/${id}/`, task);
+    return response.data;
   }
 
   async deleteTask(id: number): Promise<void> {
-    return this.request<void>(`/api/tasks/${id}/`, {
-      method: 'DELETE',
-    });
+    await this.client.delete(`/api/tasks/${id}/`);
   }
 
   // Category API methods
   async getCategories(): Promise<Category[]> {
-    return this.request<Category[]>('/api/categories/');
+    const response = await this.client.get('/api/categories/');
+    return response.data;
   }
 
   async createCategory(category: Omit<Category, 'id'>): Promise<Category> {
-    return this.request<Category>('/api/categories/', {
-      method: 'POST',
-      body: JSON.stringify(category),
-    });
+    const response = await this.client.post('/api/categories/', category);
+    return response.data;
   }
 
   // Context API methods
   async getContexts(): Promise<ContextEntry[]> {
-    return this.request<ContextEntry[]>('/api/contexts/');
+    const response = await this.client.get('/api/contexts/');
+    return response.data;
   }
 
   async createContext(context: Omit<ContextEntry, 'id' | 'created_at'>): Promise<ContextEntry> {
-    return this.request<ContextEntry>('/api/contexts/', {
-      method: 'POST',
-      body: JSON.stringify(context),
-    });
+    const response = await this.client.post('/api/contexts/', context);
+    return response.data;
   }
 
   // AI Suggestion API
   async getAISuggestions(input: AISuggestionInput): Promise<AISuggestionResponse> {
-    return this.request<AISuggestionResponse>('/api/suggestions/', {
-      method: 'POST',
-      body: JSON.stringify(input),
-    });
+    const response = await this.client.post('/api/suggestions/', input);
+    return response.data;
   }
 }
 

@@ -3,26 +3,24 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/auth-context';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { CheckSquare, Plus, MessageSquare, Menu, LogOut, User } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { CheckSquare, Plus, MessageSquare, Menu, User, LogOut, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
-import { authService } from '@/utils/auth';
+import toast from 'react-hot-toast';
 
 export function Navigation() {
   const pathname = usePathname();
+  const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const navRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Get current user info
-    const currentUser = authService.getCurrentUser();
-    setUser(currentUser);
-
     if (navRef.current && logoRef.current) {
       gsap.fromTo(navRef.current, 
         { y: -20, opacity: 0 },
@@ -35,6 +33,15 @@ export function Navigation() {
       );
     }
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success('Logged out successfully');
+    } catch (error) {
+      toast.error('Logout failed');
+    }
+  };
 
   const navItems = [
     {
@@ -57,45 +64,41 @@ export function Navigation() {
     },
   ];
 
-  const handleLogout = () => {
-    authService.logout();
-  };
-
   const NavLink = ({ href, label, icon: Icon, description, mobile = false }: any) => (
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2 rounded-lg transition-all duration-200 hover:bg-white hover:shadow-md",
-        pathname === href && "bg-white shadow-md ring-1 ring-blue-200",
+        "flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2 rounded-lg transition-all duration-200 hover:bg-white/80 hover:shadow-md",
+        pathname === href && "bg-white shadow-md ring-1 ring-ash-lilac",
         mobile && "flex-col text-center gap-1 p-3"
       )}
       onClick={() => mobile && setIsOpen(false)}
     >
-      <Icon className={cn("h-4 w-4 sm:h-5 sm:w-5", pathname === href && "text-blue-600")} />
+      <Icon className={cn("h-4 w-4 sm:h-5 sm:w-5", pathname === href && "text-plum-twilight")} />
       <div className={cn("flex flex-col", mobile && "items-center")}>
-        <span className={cn("font-medium text-sm sm:text-base", pathname === href && "text-blue-900")}>
+        <span className={cn("font-medium text-sm sm:text-base", pathname === href && "text-deep-mauve")}>
           {label}
         </span>
-        <span className="text-xs text-gray-500 hidden sm:block">{description}</span>
+        <span className="text-xs text-mist-gray hidden sm:block">{description}</span>
       </div>
     </Link>
   );
 
   return (
-    <nav ref={navRef} className="bg-white/80 backdrop-blur-sm border-b sticky top-0 z-50">
+    <nav ref={navRef} className="bg-white/90 backdrop-blur-sm border-b border-dusty-blush sticky top-0 z-50">
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 max-w-7xl">
         <div className="flex items-center justify-between h-14 sm:h-16">
           <div className="flex items-center gap-3 sm:gap-4">
             <Link href="/" className="flex items-center gap-2">
-              <div ref={logoRef} className="h-7 w-7 sm:h-8 sm:w-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <CheckSquare className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+              <div ref={logoRef} className="h-7 w-7 sm:h-8 sm:w-8 bg-gradient-to-br from-plum-twilight to-deep-mauve rounded-lg flex items-center justify-center">
+                <CheckSquare className="h-4 w-4 sm:h-5 sm:w-5 text-pale-oat" />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-lg sm:text-xl font-bold text-gray-900">NotSoSmart</h1>
-                <p className="text-xs text-gray-500">Smart Todo List</p>
+                <h1 className="text-lg sm:text-xl font-bold text-deep-mauve">NotSoSmart</h1>
+                <p className="text-xs text-mist-gray">Smart Todo List</p>
               </div>
               <div className="sm:hidden">
-                <h1 className="text-lg font-bold text-gray-900">NotSoSmart</h1>
+                <h1 className="text-lg font-bold text-deep-mauve">NotSoSmart</h1>
               </div>
             </Link>
           </div>
@@ -107,73 +110,50 @@ export function Navigation() {
             ))}
           </div>
 
-          {/* User Menu & Mobile Navigation */}
+          {/* Mobile Navigation */}
           <div className="flex items-center gap-2">
-            {/* User Info */}
-            {user && (
-              <div className="hidden md:flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                  {user.username.charAt(0).toUpperCase()}
-                </div>
-                <span className="text-sm text-gray-700 hidden lg:block">
-                  {user.username}
-                </span>
-              </div>
-            )}
-
-            {/* Status Badge */}
-            <Badge variant="outline" className="hidden md:flex items-center gap-1 text-xs">
+            <Badge variant="outline" className="hidden md:flex items-center gap-1 text-xs border-ash-lilac text-plum-twilight">
               <div className="h-2 w-2 bg-green-500 rounded-full" />
               Online
             </Badge>
-
-            {/* Logout Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleLogout}
-              className="hidden md:flex items-center gap-1"
-            >
-              <LogOut className="h-4 w-4" />
-              <span className="hidden lg:inline">Logout</span>
-            </Button>
+            
+            {/* User Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-ash-lilac hover:bg-dusty-blush">
+                  <User className="h-4 w-4 text-plum-twilight" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-white border-dusty-blush">
+                <div className="px-2 py-1.5">
+                  <p className="text-sm font-medium text-deep-mauve">{user?.username}</p>
+                  <p className="text-xs text-mist-gray">{user?.email}</p>
+                </div>
+                <DropdownMenuSeparator className="bg-dusty-blush" />
+                <DropdownMenuItem className="text-deep-mauve hover:bg-pale-oat">
+                  <Settings className="mr-2 h-4 w-4" />
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-dusty-blush" />
+                <DropdownMenuItem onClick={handleLogout} className="text-red-600 hover:bg-red-50">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             
             {/* Mobile Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="lg:hidden h-8 w-8 p-0">
-                  <Menu className="h-4 w-4" />
+                <Button variant="outline" size="sm" className="lg:hidden h-8 w-8 p-0 border-ash-lilac hover:bg-dusty-blush">
+                  <Menu className="h-4 w-4 text-plum-twilight" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-64 sm:w-72">
+              <SheetContent side="right" className="w-64 sm:w-72 bg-white border-dusty-blush">
                 <div className="flex flex-col gap-4 mt-8">
-                  {/* User Info in Mobile */}
-                  {user && (
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                        {user.username.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-900">{user.username}</div>
-                        <div className="text-sm text-gray-500">{user.email}</div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Navigation Items */}
                   {navItems.map((item) => (
                     <NavLink key={item.href} {...item} mobile />
                   ))}
-                  
-                  {/* Logout Button in Mobile */}
-                  <Button
-                    variant="outline"
-                    onClick={handleLogout}
-                    className="flex items-center gap-2 justify-center"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Logout
-                  </Button>
                 </div>
               </SheetContent>
             </Sheet>

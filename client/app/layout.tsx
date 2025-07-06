@@ -1,15 +1,40 @@
+"use client";
+
 import './globals.css';
-import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { Provider } from 'react-redux';
+import { store } from '@/store';
+import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from '@/contexts/auth-context';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Navigation } from '@/components/Navigation';
-import { AuthGuard } from '@/components/AuthGuard';
+import { usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/auth-context';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata: Metadata = {
-  title: 'NotSoSmart - Smart Todo List',
-  description: 'AI-powered task management with context-aware suggestions',
-};
+function AppContent({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const { isAuthenticated } = useAuth();
+  
+  const isAuthPage = pathname?.startsWith('/auth');
+  const isLandingPage = pathname === '/' && !isAuthenticated;
+
+  return (
+    <ProtectedRoute>
+      {isAuthPage || isLandingPage ? (
+        children
+      ) : (
+        <div className="min-h-screen bg-gradient-to-br from-pale-oat via-dusty-blush to-rose-fog">
+          <Navigation />
+          <main className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8 max-w-7xl">
+            {children}
+          </main>
+        </div>
+      )}
+    </ProtectedRoute>
+  );
+}
 
 export default function RootLayout({
   children,
@@ -19,47 +44,38 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthGuard>
-          <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-            <ConditionalNavigation />
-            <ConditionalMain>
-              {children}
-            </ConditionalMain>
-          </div>
-        </AuthGuard>
+        <Provider store={store}>
+          <AuthProvider>
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: '#4e395a',
+                  color: '#f4ede9',
+                  border: '1px solid #674b74',
+                },
+                success: {
+                  duration: 3000,
+                  iconTheme: {
+                    primary: '#10b981',
+                    secondary: '#f4ede9',
+                  },
+                },
+                error: {
+                  duration: 5000,
+                  iconTheme: {
+                    primary: '#ef4444',
+                    secondary: '#f4ede9',
+                  },
+                },
+              }}
+            />
+            
+            <AppContent>{children}</AppContent>
+          </AuthProvider>
+        </Provider>
       </body>
     </html>
-  );
-}
-
-// Component to conditionally render navigation
-function ConditionalNavigation() {
-  if (typeof window === 'undefined') return null;
-  
-  const pathname = window.location.pathname;
-  const isAuthPage = pathname.startsWith('/auth/') || pathname === '/landing';
-  
-  if (isAuthPage) return null;
-  
-  return <Navigation />;
-}
-
-// Component to conditionally render main container
-function ConditionalMain({ children }: { children: React.ReactNode }) {
-  if (typeof window === 'undefined') {
-    return <main>{children}</main>;
-  }
-  
-  const pathname = window.location.pathname;
-  const isAuthPage = pathname.startsWith('/auth/') || pathname === '/landing';
-  
-  if (isAuthPage) {
-    return <main>{children}</main>;
-  }
-  
-  return (
-    <main className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8 max-w-7xl">
-      {children}
-    </main>
   );
 }
