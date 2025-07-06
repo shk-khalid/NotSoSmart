@@ -25,10 +25,10 @@ function AppContent({ children }: { children: React.ReactNode }) {
   // Show loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-cream-blush via-warm-beige to-dusty-rose flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-pale-oat via-dusty-blush to-rose-fog flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rich-mauve mx-auto mb-4"></div>
-          <p className="text-deep-plum">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-plum-twilight mx-auto mb-4"></div>
+          <p className="text-mist-gray">Loading...</p>
         </div>
       </div>
     );
@@ -37,7 +37,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
   return (
     <ProtectedRoute>
       {shouldShowNavigation ? (
-        <div className="min-h-screen bg-gradient-to-br from-cream-blush via-warm-beige to-dusty-rose">
+        <div className="min-h-screen bg-gradient-to-br from-pale-oat via-dusty-blush to-rose-fog">
           <Navigation />
           <main className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8 max-w-7xl">
             {children}
@@ -65,22 +65,22 @@ export default function RootLayout({
               toastOptions={{
                 duration: 4000,
                 style: {
-                  background: '#674b74',
-                  color: '#dbcbc1',
-                  border: '1px solid #856287',
+                  background: '#4e395a',
+                  color: '#f4ede9',
+                  border: '1px solid #674b74',
                 },
                 success: {
                   duration: 3000,
                   iconTheme: {
                     primary: '#10b981',
-                    secondary: '#dbcbc1',
+                    secondary: '#f4ede9',
                   },
                 },
                 error: {
                   duration: 5000,
                   iconTheme: {
                     primary: '#ef4444',
-                    secondary: '#dbcbc1',
+                    secondary: '#f4ede9',
                   },
                 },
               }}

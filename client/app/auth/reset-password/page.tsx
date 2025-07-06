@@ -53,31 +53,31 @@ export default function ResetPasswordPage() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-cream-blush via-warm-beige to-dusty-rose flex items-center justify-center p-4">
-        <Card ref={cardRef} className="w-full max-w-md bg-white/90 border-warm-beige shadow-lg">
+      <div className="min-h-screen bg-gradient-to-br from-pale-oat via-dusty-blush to-rose-fog flex items-center justify-center p-4">
+        <Card ref={cardRef} className="w-full max-w-md bg-white/90 border-dusty-blush">
           <CardHeader className="text-center">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <div className="h-10 w-10 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-lg flex items-center justify-center">
-                <CheckSquare className="h-6 w-6 text-cream-blush" />
+              <div className="h-10 w-10 bg-gradient-to-br from-plum-twilight to-deep-mauve rounded-lg flex items-center justify-center">
+                <CheckSquare className="h-6 w-6 text-pale-oat" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-deep-plum">NotSoSmart</h1>
+                <h1 className="text-xl font-bold text-deep-mauve">NotSoSmart</h1>
               </div>
             </div>
-            <CardTitle className="text-2xl font-bold text-deep-plum">Check Your Email</CardTitle>
-            <CardDescription className="text-rich-mauve">
+            <CardTitle className="text-2xl font-bold text-deep-mauve">Check Your Email</CardTitle>
+            <CardDescription className="text-mist-gray">
               We've sent password reset instructions to {email}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="text-center text-sm text-rich-mauve">
+            <div className="text-center text-sm text-mist-gray">
               <p>Didn't receive the email? Check your spam folder or try again.</p>
             </div>
             
             <Button
               onClick={() => setIsSubmitted(false)}
               variant="outline"
-              className="w-full border-warm-beige text-rich-mauve hover:bg-warm-beige"
+              className="w-full border-dusty-blush text-plum-twilight hover:bg-dusty-blush"
             >
               Try Different Email
             </Button>
@@ -85,7 +85,7 @@ export default function ResetPasswordPage() {
             <div className="text-center">
               <Link 
                 href="/auth/login" 
-                className="text-sm text-rich-mauve hover:text-soft-mauve flex items-center justify-center gap-1 transition-colors"
+                className="text-sm text-plum-twilight hover:text-ash-lilac flex items-center justify-center gap-1"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back to Sign In
@@ -98,28 +98,28 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cream-blush via-warm-beige to-dusty-rose flex items-center justify-center p-4">
-      <Card ref={cardRef} className="w-full max-w-md bg-white/90 border-warm-beige shadow-lg">
+    <div className="min-h-screen bg-gradient-to-br from-pale-oat via-dusty-blush to-rose-fog flex items-center justify-center p-4">
+      <Card ref={cardRef} className="w-full max-w-md bg-white/90 border-dusty-blush">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="h-10 w-10 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-lg flex items-center justify-center">
-              <CheckSquare className="h-6 w-6 text-cream-blush" />
+            <div className="h-10 w-10 bg-gradient-to-br from-plum-twilight to-deep-mauve rounded-lg flex items-center justify-center">
+              <CheckSquare className="h-6 w-6 text-pale-oat" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-deep-plum">NotSoSmart</h1>
+              <h1 className="text-xl font-bold text-deep-mauve">NotSoSmart</h1>
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold text-deep-plum">Reset Password</CardTitle>
-          <CardDescription className="text-rich-mauve">
+          <CardTitle className="text-2xl font-bold text-deep-mauve">Reset Password</CardTitle>
+          <CardDescription className="text-mist-gray">
             Enter your email address and we'll send you a link to reset your password
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-deep-plum">Email</Label>
+              <Label htmlFor="email" className="text-deep-mauve">Email</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-rich-mauve" />
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-mist-gray" />
                 <Input
                   id="email"
                   name="email"
@@ -127,7 +127,7 @@ export default function ResetPasswordPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  className="pl-10 border-warm-beige focus:border-rich-mauve focus:ring-rich-mauve"
+                  className="pl-10 border-dusty-blush focus:border-plum-twilight focus:ring-plum-twilight"
                   required
                   disabled={isLoading || authLoading}
                 />
@@ -136,7 +136,7 @@ export default function ResetPasswordPage() {
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-rich-mauve to-deep-plum hover:from-deep-plum hover:to-rich-mauve text-cream-blush"
+              className="w-full bg-gradient-to-r from-plum-twilight to-deep-mauve hover:from-deep-mauve hover:to-plum-twilight text-pale-oat"
               disabled={isLoading || authLoading}
             >
               {isLoading ? (
@@ -152,7 +152,7 @@ export default function ResetPasswordPage() {
             <div className="text-center">
               <Link 
                 href="/auth/login" 
-                className="text-sm text-rich-mauve hover:text-soft-mauve flex items-center justify-center gap-1 transition-colors"
+                className="text-sm text-plum-twilight hover:text-ash-lilac flex items-center justify-center gap-1"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back to Sign In

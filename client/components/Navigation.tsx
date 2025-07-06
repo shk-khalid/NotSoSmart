@@ -45,7 +45,7 @@ export function Navigation() {
 
   const navItems = [
     {
-      href: '/dashboard',
+      href: '/',
       label: 'Dashboard',
       icon: CheckSquare,
       description: 'View all tasks',
@@ -69,36 +69,36 @@ export function Navigation() {
       href={href}
       className={cn(
         "flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2 rounded-lg transition-all duration-200 hover:bg-white/80 hover:shadow-md",
-        pathname === href && "bg-white shadow-md ring-1 ring-soft-mauve",
+        pathname === href && "bg-white shadow-md ring-1 ring-ash-lilac",
         mobile && "flex-col text-center gap-1 p-3"
       )}
       onClick={() => mobile && setIsOpen(false)}
     >
-      <Icon className={cn("h-4 w-4 sm:h-5 sm:w-5", pathname === href && "text-rich-mauve")} />
+      <Icon className={cn("h-4 w-4 sm:h-5 sm:w-5", pathname === href && "text-plum-twilight")} />
       <div className={cn("flex flex-col", mobile && "items-center")}>
-        <span className={cn("font-medium text-sm sm:text-base", pathname === href && "text-deep-plum")}>
+        <span className={cn("font-medium text-sm sm:text-base", pathname === href && "text-deep-mauve")}>
           {label}
         </span>
-        <span className="text-xs text-rich-mauve hidden sm:block">{description}</span>
+        <span className="text-xs text-mist-gray hidden sm:block">{description}</span>
       </div>
     </Link>
   );
 
   return (
-    <nav ref={navRef} className="bg-white/90 backdrop-blur-sm border-b border-warm-beige sticky top-0 z-50">
+    <nav ref={navRef} className="bg-white/90 backdrop-blur-sm border-b border-dusty-blush sticky top-0 z-50">
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 max-w-7xl">
         <div className="flex items-center justify-between h-14 sm:h-16">
           <div className="flex items-center gap-3 sm:gap-4">
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <div ref={logoRef} className="h-7 w-7 sm:h-8 sm:w-8 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-lg flex items-center justify-center">
-                <CheckSquare className="h-4 w-4 sm:h-5 sm:w-5 text-cream-blush" />
+            <Link href="/" className="flex items-center gap-2">
+              <div ref={logoRef} className="h-7 w-7 sm:h-8 sm:w-8 bg-gradient-to-br from-plum-twilight to-deep-mauve rounded-lg flex items-center justify-center">
+                <CheckSquare className="h-4 w-4 sm:h-5 sm:w-5 text-pale-oat" />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-lg sm:text-xl font-bold text-deep-plum">NotSoSmart</h1>
-                <p className="text-xs text-rich-mauve">Smart Todo List</p>
+                <h1 className="text-lg sm:text-xl font-bold text-deep-mauve">NotSoSmart</h1>
+                <p className="text-xs text-mist-gray">Smart Todo List</p>
               </div>
               <div className="sm:hidden">
-                <h1 className="text-lg font-bold text-deep-plum">NotSoSmart</h1>
+                <h1 className="text-lg font-bold text-deep-mauve">NotSoSmart</h1>
               </div>
             </Link>
           </div>
@@ -112,7 +112,7 @@ export function Navigation() {
 
           {/* Mobile Navigation */}
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="hidden md:flex items-center gap-1 text-xs border-soft-mauve text-rich-mauve">
+            <Badge variant="outline" className="hidden md:flex items-center gap-1 text-xs border-ash-lilac text-plum-twilight">
               <div className="h-2 w-2 bg-green-500 rounded-full" />
               Online
             </Badge>
@@ -120,21 +120,21 @@ export function Navigation() {
             {/* User Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-soft-mauve hover:bg-warm-beige">
-                  <User className="h-4 w-4 text-rich-mauve" />
+                <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-ash-lilac hover:bg-dusty-blush">
+                  <User className="h-4 w-4 text-plum-twilight" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-white border-warm-beige">
+              <DropdownMenuContent align="end" className="w-56 bg-white border-dusty-blush">
                 <div className="px-2 py-1.5">
-                  <p className="text-sm font-medium text-deep-plum">{user?.username}</p>
-                  <p className="text-xs text-rich-mauve">{user?.email}</p>
+                  <p className="text-sm font-medium text-deep-mauve">{user?.username}</p>
+                  <p className="text-xs text-mist-gray">{user?.email}</p>
                 </div>
-                <DropdownMenuSeparator className="bg-warm-beige" />
-                <DropdownMenuItem className="text-deep-plum hover:bg-cream-blush">
+                <DropdownMenuSeparator className="bg-dusty-blush" />
+                <DropdownMenuItem className="text-deep-mauve hover:bg-pale-oat">
                   <Settings className="mr-2 h-4 w-4" />
                   Settings
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-warm-beige" />
+                <DropdownMenuSeparator className="bg-dusty-blush" />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600 hover:bg-red-50">
                   <LogOut className="mr-2 h-4 w-4" />
                   Logout
@@ -145,11 +145,11 @@ export function Navigation() {
             {/* Mobile Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="lg:hidden h-8 w-8 p-0 border-soft-mauve hover:bg-warm-beige">
-                  <Menu className="h-4 w-4 text-rich-mauve" />
+                <Button variant="outline" size="sm" className="lg:hidden h-8 w-8 p-0 border-ash-lilac hover:bg-dusty-blush">
+                  <Menu className="h-4 w-4 text-plum-twilight" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-64 sm:w-72 bg-white border-warm-beige">
+              <SheetContent side="right" className="w-64 sm:w-72 bg-white border-dusty-blush">
                 <div className="flex flex-col gap-4 mt-8">
                   {navItems.map((item) => (
                     <NavLink key={item.href} {...item} mobile />

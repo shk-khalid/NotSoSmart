@@ -87,8 +87,8 @@ export default function Dashboard() {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rich-mauve mx-auto mb-4"></div>
-          <p className="text-deep-plum">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-plum-twilight mx-auto mb-4"></div>
+          <p className="text-mist-gray">Loading...</p>
         </div>
       </div>
     );
@@ -151,8 +151,8 @@ export default function Dashboard() {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rich-mauve mx-auto mb-4"></div>
-          <p className="text-deep-plum">Loading your tasks...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-plum-twilight mx-auto mb-4"></div>
+          <p className="text-mist-gray">Loading your tasks...</p>
         </div>
       </div>
     );
@@ -161,13 +161,13 @@ export default function Dashboard() {
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <Card className="w-full max-w-md mx-4 bg-white/80 border-warm-beige">
+        <Card className="w-full max-w-md mx-4 bg-white/80 border-dusty-blush">
           <CardContent className="pt-6">
             <div className="text-center">
               <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-deep-plum mb-2">Error Loading Tasks</h3>
-              <p className="text-rich-mauve mb-4">{error}</p>
-              <Button onClick={() => window.location.reload()} className="bg-rich-mauve hover:bg-deep-plum text-cream-blush">
+              <h3 className="text-lg font-semibold text-deep-mauve mb-2">Error Loading Tasks</h3>
+              <p className="text-mist-gray mb-4">{error}</p>
+              <Button onClick={() => window.location.reload()} className="bg-plum-twilight hover:bg-deep-mauve text-pale-oat">
                 Try Again
               </Button>
             </div>
@@ -182,11 +182,11 @@ export default function Dashboard() {
       {/* Header */}
       <div ref={headerRef} className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="w-full sm:w-auto">
-          <h1 className="text-2xl sm:text-3xl font-bold text-deep-plum">Task Dashboard</h1>
-          <p className="text-rich-mauve mt-1 text-sm sm:text-base">Manage your tasks with AI-powered insights</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-deep-mauve">Task Dashboard</h1>
+          <p className="text-mist-gray mt-1 text-sm sm:text-base">Manage your tasks with AI-powered insights</p>
         </div>
         <Link href="/tasks/create" className="w-full sm:w-auto">
-          <Button className="w-full sm:w-auto bg-gradient-to-r from-rich-mauve to-deep-plum hover:from-deep-plum hover:to-rich-mauve text-cream-blush">
+          <Button className="w-full sm:w-auto bg-gradient-to-r from-plum-twilight to-deep-mauve hover:from-deep-mauve hover:to-plum-twilight text-pale-oat">
             <Plus className="h-4 w-4 mr-2" />
             Create Task
           </Button>
@@ -195,35 +195,35 @@ export default function Dashboard() {
 
       {/* Stats Cards */}
       <div ref={statsRef} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <Card className="bg-white/80 border-warm-beige">
+        <Card className="bg-white/80 border-dusty-blush">
           <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm text-rich-mauve">Total Tasks</p>
-                <p className="text-xl sm:text-2xl font-bold text-deep-plum">{taskCounts.total}</p>
+                <p className="text-xs sm:text-sm text-mist-gray">Total Tasks</p>
+                <p className="text-xl sm:text-2xl font-bold text-deep-mauve">{taskCounts.total}</p>
               </div>
-              <CheckSquare className="h-6 w-6 sm:h-8 sm:w-8 text-rich-mauve" />
+              <CheckSquare className="h-6 w-6 sm:h-8 sm:w-8 text-plum-twilight" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 border-warm-beige">
+        <Card className="bg-white/80 border-dusty-blush">
           <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm text-rich-mauve">In Progress</p>
-                <p className="text-xl sm:text-2xl font-bold text-soft-mauve">{taskCounts.in_progress}</p>
+                <p className="text-xs sm:text-sm text-mist-gray">In Progress</p>
+                <p className="text-xl sm:text-2xl font-bold text-plum-twilight">{taskCounts.in_progress}</p>
               </div>
-              <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-soft-mauve" />
+              <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-plum-twilight" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 border-warm-beige">
+        <Card className="bg-white/80 border-dusty-blush">
           <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm text-rich-mauve">Completed</p>
+                <p className="text-xs sm:text-sm text-mist-gray">Completed</p>
                 <p className="text-xl sm:text-2xl font-bold text-green-600">{taskCounts.completed}</p>
               </div>
               <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
@@ -231,11 +231,11 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 border-warm-beige">
+        <Card className="bg-white/80 border-dusty-blush">
           <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm text-rich-mauve">Overdue</p>
+                <p className="text-xs sm:text-sm text-mist-gray">Overdue</p>
                 <p className="text-xl sm:text-2xl font-bold text-red-600">{overdueTasks}</p>
               </div>
               <AlertCircle className="h-6 w-6 sm:h-8 sm:w-8 text-red-600" />
@@ -255,27 +255,27 @@ export default function Dashboard() {
       {/* Tasks Grid */}
       <div ref={tasksRef} className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <h2 className="text-lg sm:text-xl font-semibold text-deep-plum">
+          <h2 className="text-lg sm:text-xl font-semibold text-deep-mauve">
             {filters.status === 'all' ? 'All Tasks' : `${filters.status.replace('_', ' ')} Tasks`}
           </h2>
-          <Badge variant="outline" className="self-start sm:self-auto border-soft-mauve text-rich-mauve">
+          <Badge variant="outline" className="self-start sm:self-auto border-ash-lilac text-plum-twilight">
             {filteredTasks.length} of {tasks.length} tasks
           </Badge>
         </div>
 
         {filteredTasks.length === 0 ? (
-          <Card className="bg-white/80 border-warm-beige">
+          <Card className="bg-white/80 border-dusty-blush">
             <CardContent className="py-8 sm:py-12 text-center">
-              <CheckSquare className="h-12 w-12 text-rich-mauve mx-auto mb-4" />
-              <p className="text-rich-mauve text-lg">No tasks found</p>
-              <p className="text-rich-mauve mt-2 text-sm sm:text-base">
+              <CheckSquare className="h-12 w-12 text-mist-gray mx-auto mb-4" />
+              <p className="text-mist-gray text-lg">No tasks found</p>
+              <p className="text-mist-gray mt-2 text-sm sm:text-base">
                 {tasks.length === 0 
                   ? "Create your first task to get started!" 
                   : "Try adjusting your filters or create a new task."
                 }
               </p>
               <Link href="/tasks/create">
-                <Button className="mt-4 bg-rich-mauve hover:bg-deep-plum text-cream-blush">
+                <Button className="mt-4 bg-plum-twilight hover:bg-deep-mauve text-pale-oat">
                   <Plus className="h-4 w-4 mr-2" />
                   Create Your First Task
                 </Button>
