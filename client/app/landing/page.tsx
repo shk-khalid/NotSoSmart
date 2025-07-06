@@ -93,29 +93,29 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-cream-blush via-warm-beige to-dusty-rose">
       {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-sm border-b sticky top-0 z-50">
+      <nav className="bg-white/80 backdrop-blur-sm border-b border-warm-beige sticky top-0 z-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <CheckSquare className="h-5 w-5 text-white" />
+              <div className="h-8 w-8 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-lg flex items-center justify-center">
+                <CheckSquare className="h-5 w-5 text-cream-blush" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">NotSoSmart</h1>
-                <p className="text-xs text-gray-500 hidden sm:block">Smart Todo List</p>
+                <h1 className="text-xl font-bold text-deep-plum">NotSoSmart</h1>
+                <p className="text-xs text-rich-mauve hidden sm:block">Smart Todo List</p>
               </div>
             </div>
             
             <div className="flex items-center gap-3">
               <Link href="/auth/login">
-                <Button variant="ghost" className="hidden sm:inline-flex">
+                <Button variant="ghost" className="hidden sm:inline-flex text-deep-plum hover:bg-warm-beige">
                   Sign In
                 </Button>
               </Link>
               <Link href="/auth/register">
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                <Button className="bg-gradient-to-r from-rich-mauve to-deep-plum hover:from-deep-plum hover:to-rich-mauve text-cream-blush">
                   Get Started
                 </Button>
               </Link>
@@ -128,35 +128,35 @@ export default function LandingPage() {
       <section className="py-12 sm:py-20 lg:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div ref={heroRef} className="text-center space-y-8">
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+            <Badge variant="outline" className="bg-white/50 text-rich-mauve border-soft-mauve">
               ✨ AI-Powered Task Management
             </Badge>
             
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-deep-plum leading-tight">
               Smart Todo Lists That
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Actually Work</span>
+              <span className="bg-gradient-to-r from-rich-mauve to-deep-plum bg-clip-text text-transparent"> Actually Work</span>
             </h1>
             
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-rich-mauve max-w-3xl mx-auto leading-relaxed">
               Transform your scattered thoughts into organized, actionable tasks with AI-powered suggestions. 
               Capture context from anywhere and let intelligence guide your productivity.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link href="/auth/register">
-                <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-3">
+                <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-rich-mauve to-deep-plum hover:from-deep-plum hover:to-rich-mauve text-cream-blush text-lg px-8 py-3">
                   Start Free Trial
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/auth/login">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg px-8 py-3">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg px-8 py-3 border-soft-mauve text-deep-plum hover:bg-warm-beige">
                   Sign In
                 </Button>
               </Link>
             </div>
             
-            <div className="flex items-center justify-center gap-6 text-sm text-gray-500">
+            <div className="flex items-center justify-center gap-6 text-sm text-rich-mauve">
               <div className="flex items-center gap-1">
                 <Check className="h-4 w-4 text-green-500" />
                 Free 14-day trial
@@ -180,10 +180,10 @@ export default function LandingPage() {
           <div ref={statsRef} className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+                <div className="text-3xl sm:text-4xl font-bold text-deep-plum mb-2">
                   {stat.number}
                 </div>
-                <div className="text-gray-600">{stat.label}</div>
+                <div className="text-rich-mauve">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -194,25 +194,25 @@ export default function LandingPage() {
       <section className="py-16 sm:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-deep-plum mb-4">
               Why Choose NotSoSmart?
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-rich-mauve max-w-2xl mx-auto">
               Experience the future of task management with features designed to boost your productivity
             </p>
           </div>
           
           <div ref={featuresRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow duration-300">
+              <Card key={index} className="text-center hover:shadow-lg transition-shadow duration-300 bg-white/80 border-warm-beige">
                 <CardHeader>
-                  <div className="mx-auto w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center mb-4">
-                    <feature.icon className="h-6 w-6 text-blue-600" />
+                  <div className="mx-auto w-12 h-12 bg-gradient-to-br from-warm-beige to-dusty-rose rounded-lg flex items-center justify-center mb-4">
+                    <feature.icon className="h-6 w-6 text-rich-mauve" />
                   </div>
-                  <CardTitle className="text-xl">{feature.title}</CardTitle>
+                  <CardTitle className="text-xl text-deep-plum">{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600">{feature.description}</p>
+                  <p className="text-rich-mauve">{feature.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -221,34 +221,34 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-16 sm:py-20 bg-gradient-to-r from-blue-50 to-purple-50">
+      <section className="py-16 sm:py-20 bg-gradient-to-r from-white/50 to-warm-beige/50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-deep-plum mb-4">
               Loved by Thousands
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-rich-mauve">
               See what our users are saying about NotSoSmart
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="bg-white/80 backdrop-blur-sm">
+              <Card key={index} className="bg-white/80 backdrop-blur-sm border-warm-beige">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-1 mb-4">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                     ))}
                   </div>
-                  <p className="text-gray-700 mb-4">"{testimonial.content}"</p>
+                  <p className="text-rich-mauve mb-4">"{testimonial.content}"</p>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                    <div className="w-10 h-10 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-full flex items-center justify-center text-cream-blush font-semibold">
                       {testimonial.avatar}
                     </div>
                     <div>
-                      <div className="font-semibold text-gray-900">{testimonial.name}</div>
-                      <div className="text-sm text-gray-600">{testimonial.role}</div>
+                      <div className="font-semibold text-deep-plum">{testimonial.name}</div>
+                      <div className="text-sm text-rich-mauve">{testimonial.role}</div>
                     </div>
                   </div>
                 </CardContent>
@@ -261,7 +261,7 @@ export default function LandingPage() {
       {/* CTA Section */}
       <section className="py-16 sm:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-          <div ref={ctaRef} className="text-center bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 sm:p-12 text-white">
+          <div ref={ctaRef} className="text-center bg-gradient-to-r from-rich-mauve to-deep-plum rounded-2xl p-8 sm:p-12 text-cream-blush">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
               Ready to Transform Your Productivity?
             </h2>
@@ -270,13 +270,13 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/auth/register">
-                <Button size="lg" variant="secondary" className="w-full sm:w-auto text-lg px-8 py-3">
+                <Button size="lg" variant="secondary" className="w-full sm:w-auto text-lg px-8 py-3 bg-cream-blush text-deep-plum hover:bg-warm-beige">
                   Start Your Free Trial
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/auth/login">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg px-8 py-3 border-white text-white hover:bg-white hover:text-blue-600">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg px-8 py-3 border-cream-blush text-cream-blush hover:bg-cream-blush hover:text-deep-plum">
                   Sign In
                 </Button>
               </Link>
@@ -286,50 +286,50 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className="bg-deep-plum text-cream-blush py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <CheckSquare className="h-5 w-5 text-white" />
+                <div className="h-8 w-8 bg-gradient-to-br from-rich-mauve to-soft-mauve rounded-lg flex items-center justify-center">
+                  <CheckSquare className="h-5 w-5 text-cream-blush" />
                 </div>
                 <span className="text-xl font-bold">NotSoSmart</span>
               </div>
-              <p className="text-gray-400">
+              <p className="text-dusty-rose">
                 Smart todo lists powered by AI to boost your productivity.
               </p>
             </div>
             
             <div>
               <h3 className="font-semibold mb-4">Product</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Features</a></li>
-                <li><a href="#" className="hover:text-white">Pricing</a></li>
-                <li><a href="#" className="hover:text-white">API</a></li>
+              <ul className="space-y-2 text-dusty-rose">
+                <li><a href="#" className="hover:text-cream-blush transition-colors">Features</a></li>
+                <li><a href="#" className="hover:text-cream-blush transition-colors">Pricing</a></li>
+                <li><a href="#" className="hover:text-cream-blush transition-colors">API</a></li>
               </ul>
             </div>
             
             <div>
               <h3 className="font-semibold mb-4">Company</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">About</a></li>
-                <li><a href="#" className="hover:text-white">Blog</a></li>
-                <li><a href="#" className="hover:text-white">Careers</a></li>
+              <ul className="space-y-2 text-dusty-rose">
+                <li><a href="#" className="hover:text-cream-blush transition-colors">About</a></li>
+                <li><a href="#" className="hover:text-cream-blush transition-colors">Blog</a></li>
+                <li><a href="#" className="hover:text-cream-blush transition-colors">Careers</a></li>
               </ul>
             </div>
             
             <div>
               <h3 className="font-semibold mb-4">Support</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Help Center</a></li>
-                <li><a href="#" className="hover:text-white">Contact</a></li>
-                <li><a href="#" className="hover:text-white">Privacy</a></li>
+              <ul className="space-y-2 text-dusty-rose">
+                <li><a href="#" className="hover:text-cream-blush transition-colors">Help Center</a></li>
+                <li><a href="#" className="hover:text-cream-blush transition-colors">Contact</a></li>
+                <li><a href="#" className="hover:text-cream-blush transition-colors">Privacy</a></li>
               </ul>
             </div>
           </div>
           
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+          <div className="border-t border-soft-mauve mt-8 pt-8 text-center text-dusty-rose">
             <p>&copy; 2025 NotSoSmart. All rights reserved.</p>
           </div>
         </div>
