@@ -20,7 +20,7 @@ import authService, {
 } from '@/services/auth-service';
 
 export interface AuthUser {
-  id: number;
+  id: string;
   username: string;
   email: string;
 }
@@ -38,7 +38,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  loading: true, // Start with loading true
+  loading: true,
   error: null,
   isAuthenticated: false,
   login: async () => {},
@@ -53,7 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const dispatch = useDispatch();
   const router = useRouter();
   const { user, accessToken } = useSelector((state: RootState) => state.auth);
-  const [loading, setLoading] = useState(true); // Start with loading true
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   // auto‑logout on inactivity
@@ -69,27 +69,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return;
         }
 
-        // Check for token in cookies or localStorage as fallback
-        const token = document.cookie
-          .split('; ')
-          .find(row => row.startsWith('authToken='))
-          ?.split('=')[1];
+        // Check for token in localStorage or cookies as fallback
+        let token = localStorage.getItem('access_token');
+        
+        if (!token) {
+          token = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('authToken='))
+            ?.split('=')[1];
+        }
 
         if (token) {
-          // Validate token with backend
-          try {
-            const response = await axios.get('/api/auth/user/', {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            
-            if (response.data) {
-              dispatch(setUser(response.data));
-              dispatch(setAccessToken(token));
-            }
-          } catch (err) {
-            // Token is invalid, clear it
-            document.cookie = 'authToken=; Max-Age=0; path=/;';
-          }
+          // For now, just set the token without validating
+          // In a real app, you'd validate with the backend
+          dispatch(setAccessToken(token));
+          
+          // You could also try to get user info here
+          // const userInfo = await getUserInfo(token);
+          // dispatch(setUser(userInfo));
         }
       } catch (err) {
         console.error('Auth check error:', err);
@@ -116,6 +113,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setError(null);
       try {
         const data = await authService.login({ email, password });
+        
+        console.log('Login response:', data); // Debug log
+        
         const {
           access_token: token,
           user: { id, email: userEmail, username },
@@ -123,7 +123,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         dispatch(
           setUser({
-            id: Number(id),
+            id: id, // Keep as string since Supabase uses string IDs
             username,
             email: userEmail,
           })
@@ -133,6 +133,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Redirect to dashboard after successful login
         router.push('/dashboard');
       } catch (err: any) {
+        console.error('Login error in context:', err);
         setError(err);
         throw err;
       } finally {

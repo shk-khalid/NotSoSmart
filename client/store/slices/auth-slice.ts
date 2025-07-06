@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface User {
-  id: number;
+  id: string; // Changed from number to string for Supabase compatibility
   username: string;
   email: string;
 }

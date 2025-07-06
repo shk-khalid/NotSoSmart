@@ -1,5 +1,4 @@
 import axiosInstance from '@/services/base-api';
-import { log } from 'console';
 
 export interface RegisterRequest {
     username: string;
@@ -22,7 +21,7 @@ export interface LoginResponse {
     user: {
         id: string;
         email: string;
-        [key: string]: any;
+        username: string;
     };
 }
 
@@ -41,8 +40,22 @@ const authService = {
     },
 
     login: async (credentials: LoginRequest): Promise<LoginResponse> => {
-        const res = await axiosInstance.post<LoginResponse>('/api/auth/login/', credentials);
-        return res.data;
+        try {
+            const res = await axiosInstance.post<LoginResponse>('/api/auth/login/', credentials);
+            
+            // Store tokens in localStorage as backup
+            if (res.data.access_token) {
+                localStorage.setItem('access_token', res.data.access_token);
+            }
+            if (res.data.refresh_token) {
+                localStorage.setItem('refresh_token', res.data.refresh_token);
+            }
+            
+            return res.data;
+        } catch (error: any) {
+            console.error('Login error:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.detail || 'Login failed');
+        }
     },
 
     resetPassword: async (data: ResetPasswordRequest): Promise<ResetPasswordResponse> => {
@@ -52,11 +65,12 @@ const authService = {
 
     logout: async (): Promise<void> => {
         try {
-            // call your logout endpoint
-            await axiosInstance.post('/api/auth/logout/');
+            // call your logout endpoint if you have one
+            // await axiosInstance.post('/api/auth/logout/');
         } finally {
             // ensure client‑side tokens are cleared even if request fails
             document.cookie = 'authToken=; Max-Age=0; path=/;';
+            document.cookie = 'refresh_token=; Max-Age=0; path=/;';
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
         }

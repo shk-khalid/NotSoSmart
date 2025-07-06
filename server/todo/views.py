@@ -82,7 +82,9 @@ class LoginView(APIView):
             })
 
             session = getattr(res, "session", None)
-            if not session:
+            user = getattr(res, "user", None)
+            
+            if not session or not user:
                 return Response(
                     {"detail": "Login failed: invalid credentials."},
                     status=status.HTTP_400_BAD_REQUEST
@@ -92,13 +94,15 @@ class LoginView(APIView):
             refresh_token = session.refresh_token
             expires_in    = session.expires_in  # seconds until expiry, if available
 
-            # Get user profile from local DB
+            # Get or create user profile from local DB
             try:
-                user_profile = UserProfile.objects.get(supabase_uid=res.user.id)
+                user_profile = UserProfile.objects.get(supabase_uid=user.id)
             except UserProfile.DoesNotExist:
-                return Response(
-                    {"detail": "User profile not found."},
-                    status=status.HTTP_400_BAD_REQUEST
+                # Create profile if it doesn't exist (for existing Supabase users)
+                user_profile = UserProfile.objects.create(
+                    supabase_uid=user.id,
+                    username=user.email.split('@')[0],  # fallback username
+                    email=user.email
                 )
 
             # Build response with the expected format
@@ -106,7 +110,7 @@ class LoginView(APIView):
                 "access_token": access_token,
                 "refresh_token": refresh_token,
                 "user": {
-                    "id": user_profile.id,
+                    "id": str(user_profile.supabase_uid),  # Use supabase_uid as string
                     "username": user_profile.username,
                     "email": user_profile.email
                 }
