@@ -1,9 +1,12 @@
+from django.conf import settings
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from .models import Task, ContextEntry, Category, UserProfile
 from .serializers import TaskSerializer, ContextEntrySerializer, CategorySerializer, LoginSerializer, RegisterSerializer, ResetPasswordSerializer, CategorizeSerializer
+from .hf_client import get_ai_task_suggestions
 from .utils import suggest_category
 from .supabase_client import supabase
 from gotrue.errors import AuthApiError
@@ -21,6 +24,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
 
 class RegisterView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         ser = RegisterSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
@@ -64,6 +68,8 @@ class RegisterView(APIView):
 
 
 class LoginView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         ser = LoginSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
@@ -74,7 +80,7 @@ class LoginView(APIView):
                 "email":    data["email"],
                 "password": data["password"]
             })
-            # No exception? Check for session
+
             session = getattr(res, "session", None)
             if not session:
                 return Response(
@@ -82,11 +88,36 @@ class LoginView(APIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-            return Response({
-                "access_token":  session.access_token,
-                "refresh_token": session.refresh_token,
-                "user":          res.user
+            access_token  = session.access_token
+            refresh_token = session.refresh_token
+            expires_in    = session.expires_in  # seconds until expiry, if available
+
+            # Build response
+            resp = Response({
+                "user": res.user
             }, status=status.HTTP_200_OK)
+
+            # Set HttpOnly cookies
+            # Access token cookie (short‑lived)
+            resp.set_cookie(
+                key="access_token",
+                value=access_token,
+                httponly=True,
+                secure=not settings.DEBUG,
+                samesite="Lax",
+                max_age=expires_in or 3600  # fallback to 1 hour
+            )
+            # Refresh token cookie (longer‑lived)
+            resp.set_cookie(
+                key="refresh_token",
+                value=refresh_token,
+                httponly=True,
+                secure=not settings.DEBUG,
+                samesite="Lax",
+                max_age=90 * 24 * 3600  # e.g. 90 days
+            )
+
+            return resp
 
         except AuthApiError as e:
             return Response(
@@ -99,8 +130,8 @@ class LoginView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-
 class ResetPasswordView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         ser = ResetPasswordSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
@@ -136,3 +167,29 @@ class CategorizeView(APIView):
             data["description"]
         )
         return Response({"suggested_category": suggested}, status=status.HTTP_200_OK)
+    
+class AISuggestionView(APIView):
+    def post(self, request):
+        data = request.data
+        try:
+            title       = data.get("title", "")
+            description = data.get("description", "")
+            context     = data.get("context", "")
+
+            output = get_ai_task_suggestions(title, description, context)
+
+            # Parse output (basic version)
+            lines = output.strip().splitlines()
+            result = {
+                "priority_score":      float(lines[0].split(":")[1].strip()),
+                "suggested_deadline":  lines[1].split(":")[1].strip(),
+                "enhanced_description": lines[2].split(":", 1)[1].strip(),
+                "suggested_category":   lines[3].split(":")[1].strip()
+            }
+
+            return Response(result, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
