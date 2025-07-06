@@ -35,8 +35,13 @@ export interface ResetPasswordResponse {
 
 const authService = {
     register: async (data: RegisterRequest): Promise<RegisterResponse> => {
-        const res = await axiosInstance.post<RegisterResponse>('/api/auth/register/', data);
-        return res.data;
+        try {
+            const res = await axiosInstance.post<RegisterResponse>('/api/auth/register/', data);
+            return res.data;
+        } catch (error: any) {
+            console.error('Registration error:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.detail || error.response?.data?.message || 'Registration failed');
+        }
     },
 
     login: async (credentials: LoginRequest): Promise<LoginResponse> => {
@@ -59,8 +64,13 @@ const authService = {
     },
 
     resetPassword: async (data: ResetPasswordRequest): Promise<ResetPasswordResponse> => {
-        const res = await axiosInstance.post<ResetPasswordResponse>('/api/auth/reset-password/', data);
-        return res.data;
+        try {
+            const res = await axiosInstance.post<ResetPasswordResponse>('/api/auth/reset-password/', data);
+            return res.data;
+        } catch (error: any) {
+            console.error('Reset password error:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.detail || error.response?.data?.message || 'Failed to send reset email');
+        }
     },
 
     logout: async (): Promise<void> => {

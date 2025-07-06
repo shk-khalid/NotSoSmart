@@ -2,8 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { useAppDispatch, useAppSelector } from '@/hooks/use-redux';
-import { resetPassword, clearError } from '@/store/slices/auth-slice';
+import { useAuth } from '@/contexts/auth-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,11 +12,11 @@ import { gsap } from 'gsap';
 import toast from 'react-hot-toast';
 
 export default function ResetPasswordPage() {
-  const dispatch = useAppDispatch();
-  const { isLoading, error } = useAppSelector((state) => state.auth);
+  const { resetPassword, loading: authLoading, isAuthenticated } = useAuth();
   
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -30,22 +29,25 @@ export default function ResetPasswordPage() {
     }
   }, []);
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-      dispatch(clearError());
-    }
-  }, [error, dispatch]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!email.trim()) {
+      toast.error('Please enter your email address');
+      return;
+    }
+
+    setIsLoading(true);
+    
     try {
-      await dispatch(resetPassword(email)).unwrap();
+      await resetPassword({ email: email.trim() });
       setIsSubmitted(true);
       toast.success('Check your inbox for reset instructions');
-    } catch (error) {
-      // Error is handled by the useEffect above
+    } catch (error: any) {
+      console.error('Reset password error:', error);
+      toast.error(error.message || 'Failed to send reset email. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -127,6 +129,7 @@ export default function ResetPasswordPage() {
                   placeholder="Enter your email"
                   className="pl-10 border-dusty-blush focus:border-plum-twilight focus:ring-plum-twilight"
                   required
+                  disabled={isLoading || authLoading}
                 />
               </div>
             </div>
@@ -134,7 +137,7 @@ export default function ResetPasswordPage() {
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-plum-twilight to-deep-mauve hover:from-deep-mauve hover:to-plum-twilight text-pale-oat"
-              disabled={isLoading}
+              disabled={isLoading || authLoading}
             >
               {isLoading ? (
                 <>

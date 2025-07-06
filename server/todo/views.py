@@ -25,18 +25,33 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
+    
     def post(self, request):
         ser = RegisterSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
         data = ser.validated_data
 
         try:
+            # Check if user already exists in local DB
+            if UserProfile.objects.filter(email=data["email"]).exists():
+                return Response(
+                    {"detail": "User with this email already exists."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            if UserProfile.objects.filter(username=data["username"]).exists():
+                return Response(
+                    {"detail": "User with this username already exists."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Register with Supabase
             res = supabase.auth.sign_up({
-                "email":    data["email"],
+                "email": data["email"],
                 "password": data["password"]
             })
-            # If sign_up fails, AuthApiError is raised.
-            # If it succeeds but no user object, treat as error
+            
+            # Check if registration was successful
             if not getattr(res, "user", None):
                 return Response(
                     {"detail": "Registration failed: no user returned."},
@@ -45,27 +60,37 @@ class RegisterView(APIView):
 
             uid = res.user.id
 
+            # Create local user profile
             UserProfile.objects.create(
                 supabase_uid=uid,
                 username=data["username"],
                 email=data["email"]
             )
+            
             return Response(
-                {"message": "User registered successfully."},
+                {"message": "User registered successfully. Please check your email for verification."},
                 status=status.HTTP_201_CREATED
             )
 
         except AuthApiError as e:
+            # Handle specific Supabase auth errors
+            error_message = e.message
+            if "already registered" in error_message.lower():
+                error_message = "An account with this email already exists."
+            elif "invalid email" in error_message.lower():
+                error_message = "Please provide a valid email address."
+            elif "password" in error_message.lower():
+                error_message = "Password must be at least 6 characters long."
+            
             return Response(
-                {"detail": e.message},
+                {"detail": error_message},
                 status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
             return Response(
-                {"detail": f"Unexpected error: {e}"},
+                {"detail": f"Registration failed: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
@@ -77,7 +102,7 @@ class LoginView(APIView):
 
         try:
             res = supabase.auth.sign_in_with_password({
-                "email":    data["email"],
+                "email": data["email"],
                 "password": data["password"]
             })
 
@@ -90,9 +115,9 @@ class LoginView(APIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-            access_token  = session.access_token
+            access_token = session.access_token
             refresh_token = session.refresh_token
-            expires_in    = session.expires_in  # seconds until expiry, if available
+            expires_in = session.expires_in  # seconds until expiry, if available
 
             # Get or create user profile from local DB
             try:
@@ -137,39 +162,62 @@ class LoginView(APIView):
             return resp
 
         except AuthApiError as e:
+            # Handle specific Supabase auth errors
+            error_message = e.message
+            if "invalid login credentials" in error_message.lower():
+                error_message = "Invalid email or password."
+            elif "email not confirmed" in error_message.lower():
+                error_message = "Please verify your email address before logging in."
+            
             return Response(
-                {"detail": e.message},
+                {"detail": error_message},
                 status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
             return Response(
-                {"detail": f"Unexpected error: {e}"},
+                {"detail": f"Login failed: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny]
+    
     def post(self, request):
         ser = ResetPasswordSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
         email = ser.validated_data["email"]
 
         try:
+            # Check if user exists in local DB
+            if not UserProfile.objects.filter(email=email).exists():
+                return Response(
+                    {"detail": "No account found with this email address."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Send reset email via Supabase
             res = supabase.auth.reset_password_email(email)
-            # If no exception, assume email sent
+            
             return Response(
-                {"message": "Password reset email sent."},
+                {"message": "Password reset email sent successfully. Please check your inbox."},
                 status=status.HTTP_200_OK
             )
 
         except AuthApiError as e:
+            # Handle specific Supabase auth errors
+            error_message = e.message
+            if "user not found" in error_message.lower():
+                error_message = "No account found with this email address."
+            elif "invalid email" in error_message.lower():
+                error_message = "Please provide a valid email address."
+            
             return Response(
-                {"detail": e.message},
+                {"detail": error_message},
                 status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
             return Response(
-                {"detail": f"Unexpected error: {e}"},
+                {"detail": f"Failed to send reset email: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
             
@@ -189,19 +237,19 @@ class AISuggestionView(APIView):
     def post(self, request):
         data = request.data
         try:
-            title       = data.get("title", "")
+            title = data.get("title", "")
             description = data.get("description", "")
-            context     = data.get("context", "")
+            context = data.get("context", "")
 
             output = get_ai_task_suggestions(title, description, context)
 
             # Parse output (basic version)
             lines = output.strip().splitlines()
             result = {
-                "priority_score":      float(lines[0].split(":")[1].strip()),
-                "suggested_deadline":  lines[1].split(":")[1].strip(),
+                "priority_score": float(lines[0].split(":")[1].strip()),
+                "suggested_deadline": lines[1].split(":")[1].strip(),
                 "enhanced_description": lines[2].split(":", 1)[1].strip(),
-                "suggested_category":   lines[3].split(":")[1].strip()
+                "suggested_category": lines[3].split(":")[1].strip()
             }
 
             return Response(result, status=status.HTTP_200_OK)

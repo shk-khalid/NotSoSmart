@@ -3,8 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAppDispatch, useAppSelector } from '@/hooks/use-redux';
-import { registerUser, clearError } from '@/store/slices/auth-slice';
+import { useAuth } from '@/contexts/auth-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,8 +14,7 @@ import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const dispatch = useAppDispatch();
-  const { isLoading, error } = useAppSelector((state) => state.auth);
+  const { register, loading: authLoading, isAuthenticated } = useAuth();
   
   const [formData, setFormData] = useState({
     username: '',
@@ -24,6 +22,7 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: '',
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -37,12 +36,12 @@ export default function RegisterPage() {
     }
   }, []);
 
+  // Redirect if already authenticated
   useEffect(() => {
-    if (error) {
-      toast.error(error);
-      dispatch(clearError());
+    if (isAuthenticated) {
+      router.push('/dashboard');
     }
-  }, [error, dispatch]);
+  }, [isAuthenticated, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,22 +51,32 @@ export default function RegisterPage() {
       return;
     }
 
-    if (formData.password.length < 8) {
-      toast.error('Password must be at least 8 characters long');
+    if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters long');
       return;
     }
 
+    if (!formData.username.trim()) {
+      toast.error('Username is required');
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
-      await dispatch(registerUser({
-        username: formData.username,
-        email: formData.email,
+      await register({
+        username: formData.username.trim(),
+        email: formData.email.trim(),
         password: formData.password,
-      })).unwrap();
+      });
       
       toast.success('Registration successful! Please log in.');
       router.push('/auth/login');
-    } catch (error) {
-      // Error is handled by the useEffect above
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      toast.error(error.message || 'Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -110,6 +119,7 @@ export default function RegisterPage() {
                   placeholder="Enter your username"
                   className="pl-10 border-dusty-blush focus:border-plum-twilight focus:ring-plum-twilight"
                   required
+                  disabled={isLoading || authLoading}
                 />
               </div>
             </div>
@@ -127,6 +137,7 @@ export default function RegisterPage() {
                   placeholder="Enter your email"
                   className="pl-10 border-dusty-blush focus:border-plum-twilight focus:ring-plum-twilight"
                   required
+                  disabled={isLoading || authLoading}
                 />
               </div>
             </div>
@@ -144,7 +155,8 @@ export default function RegisterPage() {
                   placeholder="Create a password"
                   className="pl-10 border-dusty-blush focus:border-plum-twilight focus:ring-plum-twilight"
                   required
-                  minLength={8}
+                  minLength={6}
+                  disabled={isLoading || authLoading}
                 />
               </div>
             </div>
@@ -162,6 +174,7 @@ export default function RegisterPage() {
                   placeholder="Confirm your password"
                   className="pl-10 border-dusty-blush focus:border-plum-twilight focus:ring-plum-twilight"
                   required
+                  disabled={isLoading || authLoading}
                 />
               </div>
             </div>
@@ -169,7 +182,7 @@ export default function RegisterPage() {
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-plum-twilight to-deep-mauve hover:from-deep-mauve hover:to-plum-twilight text-pale-oat"
-              disabled={isLoading}
+              disabled={isLoading || authLoading}
             >
               {isLoading ? (
                 <>

@@ -158,15 +158,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const register = useCallback(
     async (data: RegisterRequest) => {
-      setLoading(true);
       setError(null);
       try {
-        await authService.register(data);
+        const response = await authService.register(data);
+        return response;
       } catch (err: any) {
         setError(err);
         throw err;
-      } finally {
-        setLoading(false);
       }
     },
     []
@@ -174,15 +172,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const resetPassword = useCallback(
     async (data: ResetPasswordRequest) => {
-      setLoading(true);
       setError(null);
       try {
-        await authService.resetPassword(data);
+        const response = await authService.resetPassword(data);
+        return response;
       } catch (err: any) {
         setError(err);
         throw err;
-      } finally {
-        setLoading(false);
       }
     },
     []
