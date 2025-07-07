@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/auth-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckSquare, Mail, Lock, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import CheckLogo from "@/public/logo.png";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -49,11 +51,12 @@ export default function LoginPage() {
       <Card className="w-full max-w-md bg-white/90 border-warm-beige shadow-lg">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="h-10 w-10 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-lg flex items-center justify-center">
-              <CheckSquare className="h-6 w-6 text-cream-blush" />
+            <div className="h-8 w-8 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-lg flex items-center justify-center">
+              <Image src={CheckLogo} alt="Logo" width={16} height={16} />
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-deep-plum">NotSoSmart</h1>
+            <div className="flex flex-col ">
+              <span className="text-2xl font-bold text-deep-plum">Smart Todo AI</span>
+              <span className="text-xs font-light text-rich-mauve">Your Smart Todo Assistant</span>
             </div>
           </div>
           <CardTitle className="text-2xl font-bold text-deep-plum">Welcome Back</CardTitle>

@@ -5,8 +5,7 @@ import { ContextEntry, ContextSource } from '@/types';
 import { ContextForm } from '@/components/ContextForm';
 import { ContextList } from '@/components/ContextList';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { MessageSquare, TrendingUp, Calendar, FileText, AlertCircle } from 'lucide-react';
+import { MessageSquare, TrendingUp, FileText, AlertCircle } from 'lucide-react';
 import todoService from '@/services/todo-service';
 import toast from 'react-hot-toast';
 

@@ -4,12 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Sparkles, Zap, Shield, MessageSquare } from "lucide-react";
+import { Sparkles, Zap, Shield, MessageSquare, Github } from "lucide-react";
 import CheckLogo from "@/public/logo.png";
 
 export default function LandingPage() {
-
   const features = [
     {
       icon: Sparkles,
@@ -46,22 +44,50 @@ export default function LandingPage() {
             <div className="h-8 w-8 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-lg flex items-center justify-center">
               <Image src={CheckLogo} alt="Logo" width={16} height={16} />
             </div>
-            <span className="text-2xl font-bold text-deep-plum">Smart Todo AI</span>
+            <div className="flex flex-col ">
+              <span className="text-2xl font-bold text-deep-plum">Smart Todo AI</span>
+              <span className="text-xs font-light text-rich-mauve">Your Smart Todo Assistant</span>
+            </div>
           </div>
-          <Link href="https://github.com/shk-khalid/NotSoSmart" target="_blank" rel="noreferrer">
-            <Button className="bg-gradient-to-r from-rich-mauve to-deep-plum text-cream-blush">
-              GitHub
-            </Button>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/auth/register">
+              <Button
+                variant="outline"
+                className="
+                  text-deep-plum 
+                  border-deep-plum 
+                  hover:bg-deep-plum 
+                  hover:text-cream-blush 
+                  transition
+                "
+              >
+                Get Started
+              </Button>
+            </Link>
+            <Link
+              href="https://github.com/shk-khalid/NotSoSmart"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Button
+                className="
+                  bg-gradient-to-r from-rich-mauve to-deep-plum 
+                  text-cream-blush
+                  hover:from-deep-plum 
+                  hover:to-rich-mauve 
+                  transition
+                "
+              >
+                <Github className="mr-2 h-5 w-5" /> GitHub
+              </Button>
+            </Link>
+          </div>
         </div>
       </nav>
 
       {/* Hero */}
       <section className="py-20">
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center space-y-6">
-          <Badge className="bg-warm-beige text-deep-plum border-soft-mauve">
-            Full‑Stack Assignment
-          </Badge>
           <h1 className="text-5xl sm:text-6xl font-bold text-deep-plum">
             Smart Todo List with AI
           </h1>

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
@@ -13,37 +13,38 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const router = useRouter();
   const pathname = usePathname();
 
+  // Define public routes in one place
+  const publicRoutes = ['/', '/landing', '/auth/login', '/auth/register'];
+  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
+
   useEffect(() => {
-    // Don't redirect while still loading
-    if (loading) return;
+    if (loading) return; // auth not ready yet
 
-    const isAuthPage = pathname.startsWith('/auth');
-    const isRootPage = pathname === '/';
-    const isLandingPage = pathname === '/landing';
-
-    // If not authenticated and trying to access protected routes
-    if (!isAuthenticated && !isAuthPage && !isRootPage && !isLandingPage) {
-      router.push('/auth/login');
+    if (!isAuthenticated && !isPublicRoute) {
+      // trying to hit a protected page → send to login
+      router.replace('/auth/login');
       return;
     }
 
-    // If authenticated and on auth pages, redirect to dashboard
-    if (isAuthenticated && isAuthPage) {
-      router.push('/dashboard');
-      return;
+    if (isAuthenticated && pathname.startsWith('/auth')) {
+      // no more hanging out on login/register once you’re in
+      router.replace('/dashboard');
     }
-  }, [isAuthenticated, loading, router, pathname]);
+  }, [isAuthenticated, loading, pathname, router, isPublicRoute]);
 
-  // Show loading while auth is being determined
+  // spinner while determining auth
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-cream-blush via-warm-beige to-dusty-rose flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rich-mauve mx-auto mb-4"></div>
-          <p className="text-deep-plum">Loading...</p>
-        </div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rich-mauve"></div>
       </div>
     );
+  }
+
+  // during a replace redirect, bail out
+  if (!loading) {
+    if (!isAuthenticated && !isPublicRoute) return null;
+    if (isAuthenticated && pathname.startsWith('/auth')) return null;
   }
 
   return <>{children}</>;

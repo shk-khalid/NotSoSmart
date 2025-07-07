@@ -2,84 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
-/*──────────────────────────────────────────────────────────────────────────────
-  1) Semantic CSS variables for light & dark
-──────────────────────────────────────────────────────────────────────────────*/
 @layer base {
-  /* — Light mode — */
   :root {
-    /* your cream-blush / deep-plum palette as RGB triplets (for use with rgb()) */
-    --background-rgb:     219, 203, 193;  /* cream-blush */
-    --foreground-rgb:     103,  75, 116;  /* deep-plum */
-    --card-rgb:           255, 255, 255;
-    --card-foreground-rgb:103,  75, 116;
-    --popover-rgb:        255, 255, 255;
+    --background-rgb:     219,203,193;
+    --foreground-rgb:     103,75,116;
+    --card-rgb:           255,255,255;
+    --card-foreground-rgb:103,75,116;
+    --popover-rgb:        255,255,255;
     --popover-foreground-rgb:103,75,116;
-
-    --primary-rgb:        133,  98, 135;  /* rich-mauve */
+    --primary-rgb:        133,98,135;
     --primary-foreground-rgb:255,255,255;
-    --secondary-rgb:      208, 178, 177;  /* warm-beige */
+    --secondary-rgb:      208,178,177;
     --secondary-foreground-rgb:103,75,116;
-
-    --muted-rgb:          208, 178, 177;  /* warm-beige */
-    --muted-foreground-rgb:133, 98, 135;  /* rich-mauve */
-    --accent-rgb:         185, 149, 162;  /* dusty-rose */
+    --muted-rgb:          208,178,177;
+    --muted-foreground-rgb:133,98,135;
+    --accent-rgb:         185,149,162;
     --accent-foreground-rgb:103,75,116;
-
-    --destructive-rgb:    239,  68,  68;
+    --destructive-rgb:    239,68,68;
     --destructive-foreground-rgb:255,255,255;
-
-    --border-rgb:         208, 178, 177;
-    --input-rgb:          208, 178, 177;
-    --ring-rgb:           133,  98, 135;
-
-    /* small radius for all your components */
-    --radius: 0.5rem;
+    --border-rgb:         208,178,177;
+    --input-rgb:          208,178,177;
+    --ring-rgb:           133,98,135;
+    --radius:             0.5rem;
   }
-
-  /* — Dark mode — */
   :root.dark {
-    --background-rgb:     103,  75, 116;
-    --foreground-rgb:     219, 203, 193;
-    --card-rgb:           133,  98, 135;
+    --background-rgb:     103,75,116;
+    --foreground-rgb:     219,203,193;
+    --card-rgb:           133,98,135;
     --card-foreground-rgb:219,203,193;
-    --popover-rgb:        133,  98, 135;
+    --popover-rgb:        133,98,135;
     --popover-foreground-rgb:219,203,193;
-
-    --primary-rgb:        185, 149, 162;  /* dusty-rose */
-    --primary-foreground-rgb:103, 75, 116;
-    --secondary-rgb:      161, 121, 149;  /* soft-mauve */
+    --primary-rgb:        185,149,162;
+    --primary-foreground-rgb:103,75,116;
+    --secondary-rgb:      161,121,149;
     --secondary-foreground-rgb:219,203,193;
-
-    --muted-rgb:          161, 121, 149;
+    --muted-rgb:          161,121,149;
     --muted-foreground-rgb:208,178,177;
-    --accent-rgb:         185, 149, 162;
+    --accent-rgb:         185,149,162;
     --accent-foreground-rgb:103,75,116;
-
-    --destructive-rgb:    220,  38, 127;
+    --destructive-rgb:    220,38,127;
     --destructive-foreground-rgb:219,203,193;
-
-    --border-rgb:         161, 121, 149;
-    --input-rgb:          161, 121, 149;
-    --ring-rgb:           185, 149, 162;
+    --border-rgb:         161,121,149;
+    --input-rgb:          161,121,149;
+    --ring-rgb:           185,149,162;
   }
 
-  /* now wire Tailwind’s semantic names to these RGB variables: */
   * {
     @apply border-[rgb(var(--border-rgb))];
   }
   body {
     @apply bg-[rgb(var(--background-rgb))] text-[rgb(var(--foreground-rgb))];
   }
-  /* cards & popovers */
   .card {
     @apply bg-[rgb(var(--card-rgb))] text-[rgb(var(--card-foreground-rgb))];
   }
   .popover {
     @apply bg-[rgb(var(--popover-rgb))] text-[rgb(var(--popover-foreground-rgb))];
   }
-
-  /* buttons, etc */
   .btn-primary {
     @apply bg-[rgb(var(--primary-rgb))] text-[rgb(var(--primary-foreground-rgb))];
   }
@@ -92,69 +71,55 @@
   .btn-destructive {
     @apply bg-[rgb(var(--destructive-rgb))] text-[rgb(var(--destructive-foreground-rgb))];
   }
-  /* form inputs, focus rings, etc */
   input {
     @apply bg-[rgb(var(--input-rgb))] border-[rgb(var(--border-rgb))];
   }
   .ring-focus {
     @apply ring-[rgb(var(--ring-rgb))];
   }
+
+  /* scrollbar */
+  ::-webkit-scrollbar   { width:4px; height:4px }
+  ::-webkit-scrollbar-track { background:rgb(var(--background-rgb)) }
+  ::-webkit-scrollbar-thumb { background:rgb(var(--ring-rgb)); border-radius:var(--radius) }
+  ::-webkit-scrollbar-thumb:hover { background:rgb(var(--primary-rgb)) }
+  * { scrollbar-width:thin; scrollbar-color:rgb(var(--ring-rgb)) rgb(var(--background-rgb)) }
 }
 
-/* Custom utilities for responsive design */
 @layer utilities {
   .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
   }
-  
   .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    line-clamp:3;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
   }
-  
-  /* Remove default animations */
   .no-animation * {
-    animation-duration: 0s !important;
-    animation-delay: 0s !important;
-    transition-duration: 0s !important;
-    transition-delay: 0s !important;
+    animation-duration:0!important;
+    animation-delay:0!important;
+    transition-duration:0!important;
+    transition-delay:0!important;
   }
-  
-  /* Smooth scrolling */
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  /* Focus styles for accessibility */
+  html { scroll-behavior:smooth }
   .focus-visible:focus-visible {
-    outline: 2px solid theme(colors.rich-mauve);
-    outline-offset: 2px;
+    outline:2px solid rgb(var(--primary-rgb));
+    outline-offset:2px;
   }
 }
 
-/* Mobile-first responsive breakpoints */
-@media (max-width: 640px) {
-  .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
+@media (max-width:640px) {
+  .container { padding:0 1rem }
 }
-
-/* Tablet styles */
-@media (min-width: 768px) and (max-width: 1024px) {
-  .grid-responsive {
-    grid-template-columns: repeat(2, 1fr);
-  }
+@media (min-width:768px) and (max-width:1024px) {
+  .grid-responsive { grid-template-columns:repeat(2,1fr) }
 }
-
-/* Desktop styles */
-@media (min-width: 1024px) {
-  .grid-responsive {
-    grid-template-columns: repeat(3, 1fr);
-  }
+@media (min-width:1024px) {
+  .grid-responsive { grid-template-columns:repeat(3,1fr) }
 }
