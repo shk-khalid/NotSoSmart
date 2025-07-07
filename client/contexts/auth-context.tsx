@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   setUser,
   setAccessToken,
@@ -49,11 +49,9 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => {},
   logout: async () => {},
   register: async () => {
-    // stub
     return {} as RegisterResponse;
   },
   resetPassword: async () => {
-    // stub
     return {} as ResetPasswordResponse;
   },
 });
@@ -65,6 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const pathname = usePathname();
   const { user, accessToken } = useSelector((state: RootState) => state.auth);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -76,12 +75,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const checkExistingAuth = async () => {
       try {
+        // Check if we already have user and token in Redux
         if (accessToken && user) {
           setLoading(false);
           return;
         }
 
-        // Force token to string|null
+        // Try to get token from localStorage or cookies
         let token: string | null = localStorage.getItem('access_token');
         if (!token) {
           const match = document.cookie
@@ -93,7 +93,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
         if (token) {
           dispatch(setAccessToken(token));
-          // Optionally fetch user info here
+          
+          // Try to get user info from localStorage
+          const storedUser = localStorage.getItem('user');
+          if (storedUser) {
+            try {
+              const userData = JSON.parse(storedUser);
+              dispatch(setUser(userData));
+            } catch (e) {
+              console.error('Error parsing stored user data:', e);
+            }
+          }
         }
       } catch (err) {
         console.error('Auth check error:', err);
@@ -126,15 +136,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           user: { id, email: userEmail, username },
         } = data;
 
-        dispatch(
-          setUser({
-            id,
-            username,
-            email: userEmail,
-          })
-        );
+        const userData = {
+          id,
+          username,
+          email: userEmail,
+        };
+
+        dispatch(setUser(userData));
         dispatch(setAccessToken(token));
 
+        // Store user data in localStorage for persistence
+        localStorage.setItem('user', JSON.stringify(userData));
+
+        // Navigate to dashboard
         router.push('/dashboard');
       } catch (err: any) {
         console.error('Login error in context:', err);
@@ -154,6 +168,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (err) {
       console.error('Sign‑out error:', err);
     } finally {
+      // Clear user data from localStorage
+      localStorage.removeItem('user');
       dispatch(logoutAction());
       router.push('/');
       setLoading(false);

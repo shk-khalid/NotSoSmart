@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +15,8 @@ import toast from 'react-hot-toast';
 
 export function Navigation() {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const router = useRouter();
+  const { user, logout, isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
@@ -38,10 +39,16 @@ export function Navigation() {
     try {
       await logout();
       toast.success('Logged out successfully');
+      router.push('/');
     } catch (error) {
       toast.error('Logout failed');
     }
   };
+
+  // Don't render navigation if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const navItems = [
     {

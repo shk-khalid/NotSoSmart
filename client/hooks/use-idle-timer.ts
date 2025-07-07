@@ -8,7 +8,7 @@ import { RootState } from '@/store';
 import authService from '@/services/auth-service';
 import { toast } from 'react-hot-toast';
 
-const IDLE_TIMEOUT = 10 * 60 * 1000; // 10 minutes
+const IDLE_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 
 export const useIdleTimer = () => {
   const dispatch = useDispatch();
@@ -38,10 +38,10 @@ export const useIdleTimer = () => {
         // clear redux auth state
         dispatch(logout());
         // redirect to login page
-        router.push('/customer-login');
+        router.push('/auth/login');
         toast.error('Session expired due to inactivity');
       }
-    }, 1000);
+    }, 60000); // Check every minute
 
     return () => {
       events.forEach((e) => window.removeEventListener(e, handleActivity));

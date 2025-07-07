@@ -19,8 +19,9 @@ function AppContent({ children }: { children: React.ReactNode }) {
   
   // Don't show navigation on auth pages or landing page when not authenticated
   const isAuthPage = pathname?.startsWith('/auth');
-  const isLandingPage = pathname === '/' && !isAuthenticated;
-  const shouldShowNavigation = !isAuthPage && !isLandingPage && isAuthenticated;
+  const isLandingPage = pathname === '/landing';
+  const isRootPage = pathname === '/';
+  const shouldShowNavigation = !isAuthPage && !isLandingPage && isAuthenticated && !isRootPage;
 
   // Show loading state
   if (loading) {
