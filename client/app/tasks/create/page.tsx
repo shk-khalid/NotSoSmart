@@ -1,35 +1,57 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { TaskForm } from '@/components/TaskForm';
 import { AISuggestionBox } from '@/components/AISuggestionBox';
 import { Task, Category, AISuggestionInput, AISuggestionResponse } from '@/types';
-import { mockCategories } from '@/utils/api';
+import todoService from '@/services/todo-service';
+import toast from 'react-hot-toast';
 
 export default function CreateTaskPage() {
   const router = useRouter();
-  const [categories] = useState<Category[]>(mockCategories);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [aiSuggestions, setAiSuggestions] = useState<AISuggestionResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Load categories
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const categoriesData = await todoService.getCategories();
+        setCategories(categoriesData);
+      } catch (error: any) {
+        console.error('Error loading categories:', error);
+        toast.error('Failed to load categories');
+      }
+    };
+
+    loadCategories();
+  }, []);
 
   const handleSave = async (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => {
     setIsLoading(true);
     setError(null);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // In a real app, you would call the API here
-      console.log('Creating task:', taskData);
-      
-      // Redirect to dashboard
-      router.push('/');
-    } catch (error) {
+      // Transform the data to match backend expectations
+      const createTaskData = {
+        title: taskData.title,
+        description: taskData.description,
+        category: taskData.category?.id || null,
+        priority_score: taskData.priority_score,
+        deadline: taskData.deadline,
+        status: taskData.status,
+      };
+
+      await todoService.createTask(createTaskData);
+      toast.success('Task created successfully!');
+      router.push('/dashboard');
+    } catch (error: any) {
       console.error('Error creating task:', error);
-      setError('Failed to create task. Please try again.');
+      setError(error.message || 'Failed to create task. Please try again.');
+      toast.error(error.message || 'Failed to create task');
     } finally {
       setIsLoading(false);
     }
@@ -39,26 +61,17 @@ export default function CreateTaskPage() {
     setError(null);
     
     try {
-      // Simulate AI API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Mock AI suggestions
-      const mockSuggestions: AISuggestionResponse = {
-        enhanced_description: `${data.description}\n\nAI Enhanced: This task involves coordinating with stakeholders, preparing materials, and ensuring timely delivery. Consider breaking it down into smaller subtasks for better management.`,
-        suggested_deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        suggested_category: data.category || 'Work',
-        priority_score: Math.floor(Math.random() * 10) + 1,
-      };
-      
-      setAiSuggestions(mockSuggestions);
-    } catch (error) {
+      const suggestions = await todoService.getAISuggestions(data);
+      setAiSuggestions(suggestions);
+      toast.success('AI suggestions generated!');
+    } catch (error: any) {
       console.error('Error getting AI suggestions:', error);
-      setError('Failed to get AI suggestions. Please try again.');
+      setError(error.message || 'Failed to get AI suggestions. Please try again.');
+      toast.error(error.message || 'Failed to get AI suggestions');
     }
   };
 
   const handleAcceptSuggestions = () => {
-    // Suggestions are already applied in the TaskForm component
     setAiSuggestions(null);
   };
 
@@ -90,7 +103,7 @@ export default function CreateTaskPage() {
       <TaskForm
         categories={categories}
         onSave={handleSave}
-        onCancel={() => router.push('/')}
+        onCancel={() => router.push('/dashboard')}
         onAIEnhance={handleAIEnhance}
         isLoading={isLoading}
         aiSuggestions={aiSuggestions}

@@ -15,6 +15,7 @@ import { CalendarIcon, Save, Sparkles, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { gsap } from 'gsap';
+import todoService from '@/services/todo-service';
 
 interface TaskFormProps {
   task?: Task;
@@ -67,7 +68,7 @@ export function TaskForm({
         deadline: aiSuggestions.suggested_deadline ? new Date(aiSuggestions.suggested_deadline) : prev.deadline,
       }));
       
-      // If suggested category doesn't exist, we would need to create it
+      // If suggested category exists, set it
       if (aiSuggestions.suggested_category) {
         const existingCategory = categories.find(c => c.name.toLowerCase() === aiSuggestions.suggested_category.toLowerCase());
         if (existingCategory) {
@@ -103,12 +104,18 @@ export function TaskForm({
 
     setAiLoading(true);
     try {
+      // Get context data for AI suggestions
+      const contexts = await todoService.getContexts();
+      const contextData = contexts.map(c => c.content);
+
       await onAIEnhance({
         title: formData.title,
         description: formData.description,
         category: formData.category ? categories.find(c => c.id === formData.category)?.name : undefined,
-        context_data: [], // This would come from context entries
+        context_data: contextData,
       });
+    } catch (error) {
+      console.error('Error getting AI suggestions:', error);
     } finally {
       setAiLoading(false);
     }

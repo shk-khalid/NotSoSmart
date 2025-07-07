@@ -7,8 +7,9 @@ import { ContextList } from '@/components/ContextList';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MessageSquare, TrendingUp, Calendar, FileText, AlertCircle } from 'lucide-react';
-import { mockContexts } from '@/utils/api';
+import todoService from '@/services/todo-service';
 import { gsap } from 'gsap';
+import toast from 'react-hot-toast';
 
 export default function ContextPage() {
   const [contexts, setContexts] = useState<ContextEntry[]>([]);
@@ -19,17 +20,18 @@ export default function ContextPage() {
   const statsRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Load mock data
+  // Load contexts from backend
   useEffect(() => {
     const loadContexts = async () => {
       try {
         setError(null);
-        // Simulate API loading
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setContexts(mockContexts);
-      } catch (error) {
+        setIsLoading(true);
+        const contextsData = await todoService.getContexts();
+        setContexts(contextsData);
+      } catch (error: any) {
         console.error('Error loading contexts:', error);
-        setError('Failed to load context entries. Please try again.');
+        setError(error.message || 'Failed to load context entries. Please try again.');
+        toast.error(error.message || 'Failed to load contexts');
       } finally {
         setIsLoading(false);
       }
@@ -63,20 +65,17 @@ export default function ContextPage() {
   const handleAddContext = async (content: string, source: ContextSource) => {
     try {
       setError(null);
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const newContext: ContextEntry = {
-        id: Date.now(), // In real app, this would come from the backend
+      const newContext = await todoService.createContext({
         content,
         source_type: source,
-        created_at: new Date().toISOString(),
-      };
+      });
       
       setContexts(prev => [newContext, ...prev]);
-    } catch (error) {
+      toast.success('Context entry added successfully');
+    } catch (error: any) {
       console.error('Error adding context:', error);
-      setError('Failed to add context entry. Please try again.');
+      setError(error.message || 'Failed to add context entry. Please try again.');
+      toast.error(error.message || 'Failed to add context entry');
     }
   };
 
@@ -84,12 +83,13 @@ export default function ContextPage() {
     if (window.confirm('Are you sure you want to delete this context entry?')) {
       try {
         setError(null);
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await todoService.deleteContext(id);
         setContexts(prev => prev.filter(context => context.id !== id));
-      } catch (error) {
+        toast.success('Context entry deleted successfully');
+      } catch (error: any) {
         console.error('Error deleting context:', error);
-        setError('Failed to delete context entry. Please try again.');
+        setError(error.message || 'Failed to delete context entry. Please try again.');
+        toast.error(error.message || 'Failed to delete context entry');
       }
     }
   };

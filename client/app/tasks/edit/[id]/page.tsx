@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { TaskForm } from '@/components/TaskForm';
 import { AISuggestionBox } from '@/components/AISuggestionBox';
 import { Task, Category, AISuggestionInput, AISuggestionResponse } from '@/types';
-import { mockTasks, mockCategories } from '@/utils/api';
+import todoService from '@/services/todo-service';
+import toast from 'react-hot-toast';
 
 interface EditTaskPageProps {
   params: { id: string };
@@ -14,14 +15,14 @@ interface EditTaskPageProps {
 export default function EditTaskPage({ params }: EditTaskPageProps) {
   const router = useRouter();
   const [task, setTask] = useState<Task | null>(null);
-  const [categories] = useState<Category[]>(mockCategories);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [aiSuggestions, setAiSuggestions] = useState<AISuggestionResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadTask = async () => {
+    const loadData = async () => {
       try {
         setError(null);
         const taskId = parseInt(params.id);
@@ -31,41 +32,50 @@ export default function EditTaskPage({ params }: EditTaskPageProps) {
           return;
         }
         
-        const foundTask = mockTasks.find(t => t.id === taskId);
+        // Load task and categories in parallel
+        const [taskData, categoriesData] = await Promise.all([
+          todoService.getTask(taskId),
+          todoService.getCategories()
+        ]);
         
-        if (!foundTask) {
-          setError('Task not found');
-          return;
-        }
-        
-        setTask(foundTask);
-      } catch (error) {
-        console.error('Error loading task:', error);
-        setError('Failed to load task');
+        setTask(taskData);
+        setCategories(categoriesData);
+      } catch (error: any) {
+        console.error('Error loading data:', error);
+        setError(error.message || 'Failed to load task');
+        toast.error(error.message || 'Failed to load task');
       } finally {
         setLoading(false);
       }
     };
 
-    loadTask();
+    loadData();
   }, [params.id]);
 
   const handleSave = async (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => {
+    if (!task) return;
+    
     setIsLoading(true);
     setError(null);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // In a real app, you would call the API here
-      console.log('Updating task:', taskData);
-      
-      // Redirect to dashboard
-      router.push('/');
-    } catch (error) {
+      // Transform the data to match backend expectations
+      const updateTaskData = {
+        title: taskData.title,
+        description: taskData.description,
+        category: taskData.category?.id || null,
+        priority_score: taskData.priority_score,
+        deadline: taskData.deadline,
+        status: taskData.status,
+      };
+
+      await todoService.updateTask(task.id, updateTaskData);
+      toast.success('Task updated successfully!');
+      router.push('/dashboard');
+    } catch (error: any) {
       console.error('Error updating task:', error);
-      setError('Failed to update task. Please try again.');
+      setError(error.message || 'Failed to update task. Please try again.');
+      toast.error(error.message || 'Failed to update task');
     } finally {
       setIsLoading(false);
     }
@@ -75,21 +85,13 @@ export default function EditTaskPage({ params }: EditTaskPageProps) {
     setError(null);
     
     try {
-      // Simulate AI API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Mock AI suggestions
-      const mockSuggestions: AISuggestionResponse = {
-        enhanced_description: `${data.description}\n\nAI Enhanced: This task has been updated with additional context and recommendations. Consider the latest requirements and stakeholder feedback.`,
-        suggested_deadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        suggested_category: data.category || 'Work',
-        priority_score: Math.floor(Math.random() * 10) + 1,
-      };
-      
-      setAiSuggestions(mockSuggestions);
-    } catch (error) {
+      const suggestions = await todoService.getAISuggestions(data);
+      setAiSuggestions(suggestions);
+      toast.success('AI suggestions generated!');
+    } catch (error: any) {
       console.error('Error getting AI suggestions:', error);
-      setError('Failed to get AI suggestions. Please try again.');
+      setError(error.message || 'Failed to get AI suggestions. Please try again.');
+      toast.error(error.message || 'Failed to get AI suggestions');
     }
   };
 
@@ -119,7 +121,7 @@ export default function EditTaskPage({ params }: EditTaskPageProps) {
           <h2 className="text-lg font-semibold text-red-800 mb-2">Error</h2>
           <p className="text-red-700 mb-4">{error}</p>
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/dashboard')}
             className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
           >
             Back to Dashboard
@@ -162,7 +164,7 @@ export default function EditTaskPage({ params }: EditTaskPageProps) {
         task={task}
         categories={categories}
         onSave={handleSave}
-        onCancel={() => router.push('/')}
+        onCancel={() => router.push('/dashboard')}
         onAIEnhance={handleAIEnhance}
         isLoading={isLoading}
         aiSuggestions={aiSuggestions}

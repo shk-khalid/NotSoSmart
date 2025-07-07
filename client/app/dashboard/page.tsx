@@ -10,9 +10,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Plus, TrendingUp, CheckSquare, Clock, AlertCircle } from 'lucide-react';
-import { mockTasks, mockCategories } from '@/utils/api';
+import todoService from '@/services/todo-service';
 import Link from 'next/link';
 import { gsap } from 'gsap';
+import toast from 'react-hot-toast';
 
 export default function Dashboard() {
   const { isAuthenticated, loading: authLoading } = useAuth();
@@ -38,20 +39,27 @@ export default function Dashboard() {
     }
   }, [isAuthenticated, authLoading, router]);
 
-  // Load mock data
+  // Load data from backend
   useEffect(() => {
     if (!isAuthenticated) return;
 
     const loadData = async () => {
       try {
         setError(null);
-        // Simulate API loading
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setTasks(mockTasks);
-        setCategories(mockCategories);
-      } catch (error) {
+        setLoading(true);
+        
+        // Load tasks and categories in parallel
+        const [tasksData, categoriesData] = await Promise.all([
+          todoService.getTasks(),
+          todoService.getCategories()
+        ]);
+        
+        setTasks(tasksData);
+        setCategories(categoriesData);
+      } catch (error: any) {
         console.error('Error loading data:', error);
-        setError('Failed to load tasks. Please try again.');
+        setError(error.message || 'Failed to load data. Please try again.');
+        toast.error(error.message || 'Failed to load data');
       } finally {
         setLoading(false);
       }
@@ -121,29 +129,32 @@ export default function Dashboard() {
   ).length;
 
   const handleTaskEdit = (task: Task) => {
-    // Navigate to edit page
     router.push(`/tasks/edit/${task.id}`);
   };
 
   const handleTaskDelete = async (id: number) => {
     if (window.confirm('Are you sure you want to delete this task?')) {
       try {
+        await todoService.deleteTask(id);
         setTasks(prev => prev.filter(task => task.id !== id));
-      } catch (error) {
+        toast.success('Task deleted successfully');
+      } catch (error: any) {
         console.error('Error deleting task:', error);
-        setError('Failed to delete task. Please try again.');
+        toast.error(error.message || 'Failed to delete task');
       }
     }
   };
 
   const handleStatusChange = async (id: number, status: TaskStatus) => {
     try {
+      const updatedTask = await todoService.updateTask(id, { status });
       setTasks(prev => prev.map(task => 
-        task.id === id ? { ...task, status } : task
+        task.id === id ? updatedTask : task
       ));
-    } catch (error) {
+      toast.success(`Task marked as ${status.replace('_', ' ')}`);
+    } catch (error: any) {
       console.error('Error updating task status:', error);
-      setError('Failed to update task status. Please try again.');
+      toast.error(error.message || 'Failed to update task status');
     }
   };
 
@@ -167,7 +178,10 @@ export default function Dashboard() {
               <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-deep-plum mb-2">Error Loading Tasks</h3>
               <p className="text-rich-mauve mb-4">{error}</p>
-              <Button onClick={() => window.location.reload()} className="bg-rich-mauve hover:bg-deep-plum text-cream-blush">
+              <Button 
+                onClick={() => window.location.reload()} 
+                className="bg-rich-mauve hover:bg-deep-plum text-cream-blush"
+              >
                 Try Again
               </Button>
             </div>
