@@ -38,3 +38,22 @@ class UserProfile(models.Model):
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    # Add authentication-related properties for DRF compatibility
+    @property
+    def is_authenticated(self):
+        """Always return True for authenticated users"""
+        return True
+    
+    @property
+    def is_anonymous(self):
+        """Always return False for authenticated users"""
+        return False
+    
+    @property
+    def is_active(self):
+        """Always return True for active users"""
+        return True
+    
+    def __str__(self):
+        return self.username
