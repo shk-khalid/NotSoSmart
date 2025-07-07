@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
@@ -10,7 +10,6 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { CheckSquare, Plus, MessageSquare, Menu, User, LogOut, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { gsap } from 'gsap';
 import toast from 'react-hot-toast';
 
 export function Navigation() {
@@ -18,22 +17,6 @@ export function Navigation() {
   const router = useRouter();
   const { user, logout, isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const navRef = useRef<HTMLElement>(null);
-  const logoRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (navRef.current && logoRef.current) {
-      gsap.fromTo(navRef.current, 
-        { y: -20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }
-      );
-      
-      gsap.fromTo(logoRef.current,
-        { scale: 0.8, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.7)", delay: 0.2 }
-      );
-    }
-  }, []);
 
   const handleLogout = async () => {
     try {
@@ -92,12 +75,12 @@ export function Navigation() {
   );
 
   return (
-    <nav ref={navRef} className="bg-white/90 backdrop-blur-sm border-b border-warm-beige sticky top-0 z-50">
+    <nav className="bg-white/90 backdrop-blur-sm border-b border-warm-beige sticky top-0 z-50">
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 max-w-7xl">
         <div className="flex items-center justify-between h-14 sm:h-16">
           <div className="flex items-center gap-3 sm:gap-4">
             <Link href="/dashboard" className="flex items-center gap-2">
-              <div ref={logoRef} className="h-7 w-7 sm:h-8 sm:w-8 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-lg flex items-center justify-center">
+              <div className="h-7 w-7 sm:h-8 sm:w-8 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-lg flex items-center justify-center">
                 <CheckSquare className="h-4 w-4 sm:h-5 sm:w-5 text-cream-blush" />
               </div>
               <div className="hidden sm:block">

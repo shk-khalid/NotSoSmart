@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Task, Category, TaskStatus, AISuggestionInput, AISuggestionResponse } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +14,6 @@ import { Badge } from '@/components/ui/badge';
 import { CalendarIcon, Save, Sparkles, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { gsap } from 'gsap';
 import todoService from '@/services/todo-service';
 
 interface TaskFormProps {
@@ -47,17 +46,6 @@ export function TaskForm({
 
   const [showCalendar, setShowCalendar] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
-  
-  const formRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (formRef.current) {
-      gsap.fromTo(formRef.current,
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }
-      );
-    }
-  }, []);
 
   useEffect(() => {
     if (aiSuggestions) {
@@ -134,7 +122,7 @@ export function TaskForm({
   };
 
   return (
-    <Card ref={formRef} className="w-full max-w-4xl mx-auto">
+    <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
           <span>{task ? 'Edit Task' : 'Create New Task'}</span>

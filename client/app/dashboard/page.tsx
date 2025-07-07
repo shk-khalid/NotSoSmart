@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { Task, Category, FilterOptions, TaskStatus } from '@/types';
@@ -12,7 +12,6 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, TrendingUp, CheckSquare, Clock, AlertCircle } from 'lucide-react';
 import todoService from '@/services/todo-service';
 import Link from 'next/link';
-import { gsap } from 'gsap';
 import toast from 'react-hot-toast';
 
 export default function Dashboard() {
@@ -27,10 +26,7 @@ export default function Dashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  const headerRef = useRef<HTMLDivElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
-  const tasksRef = useRef<HTMLDivElement>(null);
+
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -67,28 +63,6 @@ export default function Dashboard() {
 
     loadData();
   }, [isAuthenticated]);
-
-  // GSAP animations
-  useEffect(() => {
-    if (!loading && headerRef.current && statsRef.current && tasksRef.current) {
-      const tl = gsap.timeline();
-      
-      tl.fromTo(headerRef.current,
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }
-      )
-      .fromTo(statsRef.current.children,
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" },
-        "-=0.3"
-      )
-      .fromTo(tasksRef.current,
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
-        "-=0.2"
-      );
-    }
-  }, [loading]);
 
   // Don't render if not authenticated
   if (authLoading || !isAuthenticated) {
@@ -194,7 +168,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div ref={headerRef} className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="w-full sm:w-auto">
           <h1 className="text-2xl sm:text-3xl font-bold text-deep-plum">Task Dashboard</h1>
           <p className="text-rich-mauve mt-1 text-sm sm:text-base">Manage your tasks with AI-powered insights</p>
@@ -208,7 +182,7 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div ref={statsRef} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card className="bg-white/80 border-warm-beige">
           <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
@@ -267,7 +241,7 @@ export default function Dashboard() {
       />
 
       {/* Tasks Grid */}
-      <div ref={tasksRef} className="space-y-4">
+      <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <h2 className="text-lg sm:text-xl font-semibold text-deep-plum">
             {filters.status === 'all' ? 'All Tasks' : `${filters.status.replace('_', ' ')} Tasks`}

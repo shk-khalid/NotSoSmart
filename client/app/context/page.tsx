@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { ContextEntry, ContextSource } from '@/types';
 import { ContextForm } from '@/components/ContextForm';
 import { ContextList } from '@/components/ContextList';
@@ -8,17 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MessageSquare, TrendingUp, Calendar, FileText, AlertCircle } from 'lucide-react';
 import todoService from '@/services/todo-service';
-import { gsap } from 'gsap';
 import toast from 'react-hot-toast';
 
 export default function ContextPage() {
   const [contexts, setContexts] = useState<ContextEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  const headerRef = useRef<HTMLDivElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
+
 
   // Load contexts from backend
   useEffect(() => {
@@ -40,27 +36,6 @@ export default function ContextPage() {
     loadContexts();
   }, []);
 
-  // GSAP animations
-  useEffect(() => {
-    if (!isLoading && headerRef.current && statsRef.current && contentRef.current) {
-      const tl = gsap.timeline();
-      
-      tl.fromTo(headerRef.current,
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }
-      )
-      .fromTo(statsRef.current.children,
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" },
-        "-=0.3"
-      )
-      .fromTo(contentRef.current,
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
-        "-=0.2"
-      );
-    }
-  }, [isLoading]);
 
   const handleAddContext = async (content: string, source: ContextSource) => {
     try {
@@ -111,7 +86,7 @@ export default function ContextPage() {
   if (error) {
     return (
       <div className="space-y-6">
-        <div ref={headerRef} className="text-center">
+        <div className="text-center">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Context Management</h1>
           <p className="text-gray-600 mt-2 text-sm sm:text-base">Capture and organize your ideas, messages, and notes</p>
         </div>
@@ -140,13 +115,13 @@ export default function ContextPage() {
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div ref={headerRef} className="text-center">
+      <div className="text-center">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Context Management</h1>
         <p className="text-gray-600 mt-2 text-sm sm:text-base">Capture and organize your ideas, messages, and notes</p>
       </div>
 
       {/* Stats Cards */}
-      <div ref={statsRef} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
           <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
@@ -197,7 +172,7 @@ export default function ContextPage() {
       </div>
 
       {/* Main Content */}
-      <div ref={contentRef} className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
         {/* Context Form */}
         <div className="order-2 xl:order-1">
           <ContextForm

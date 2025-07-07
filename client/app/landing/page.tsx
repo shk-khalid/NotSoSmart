@@ -1,38 +1,14 @@
-// app/landing/page.tsx
 "use client";
 
-import { useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, Zap, Shield, MessageSquare } from "lucide-react";
-import { gsap } from "gsap";
 import CheckLogo from "@/public/logo.png";
 
 export default function LandingPage() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const featuresRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const tl = gsap.timeline();
-    if (heroRef.current) {
-      tl.fromTo(
-        heroRef.current.children,
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, stagger: 0.1 }
-      );
-    }
-    if (featuresRef.current) {
-      tl.fromTo(
-        featuresRef.current.children,
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.1 },
-        "-=0.3"
-      );
-    }
-  }, []);
 
   const features = [
     {
@@ -82,10 +58,7 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="py-20">
-        <div
-          ref={heroRef}
-          className="container mx-auto px-6 lg:px-8 max-w-3xl text-center space-y-6"
-        >
+        <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center space-y-6">
           <Badge className="bg-warm-beige text-deep-plum border-soft-mauve">
             Full‑Stack Assignment
           </Badge>
@@ -103,10 +76,7 @@ export default function LandingPage() {
       <section className="py-16 bg-cream-blush">
         <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
           <h2 className="text-3xl font-bold text-deep-plum text-center mb-8">Features</h2>
-          <div
-            ref={featuresRef}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((f, i) => (
               <Card
                 key={i}

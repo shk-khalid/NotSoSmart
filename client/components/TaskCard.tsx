@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { Task, TaskStatus } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,15 +18,6 @@ interface TaskCardProps {
 
 export function TaskCard({ task, onEdit, onDelete, onStatusChange }: TaskCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (cardRef.current) {
-      gsap.fromTo(cardRef.current,
-        { y: 20, opacity: 0, scale: 0.95 },
-        { y: 0, opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }
-      );
-    }
-  }, []);
 
   const handleHover = () => {
     if (cardRef.current) {
@@ -85,7 +76,7 @@ export function TaskCard({ task, onEdit, onDelete, onStatusChange }: TaskCardPro
   const isOverdue = task.deadline && new Date(task.deadline) < new Date() && task.status !== 'completed';
 
   return (
-    <Card 
+    <Card
       ref={cardRef}
       className={cn(
         "group cursor-pointer",
@@ -144,14 +135,14 @@ export function TaskCard({ task, onEdit, onDelete, onStatusChange }: TaskCardPro
               {task.category.name}
             </Badge>
           )}
-          <Badge 
-            variant="outline" 
+          <Badge
+            variant="outline"
             className={cn("text-xs", getStatusColor(task.status))}
           >
             {task.status.replace('_', ' ')}
           </Badge>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
           {task.deadline && (
             <div className={cn(
@@ -167,7 +158,7 @@ export function TaskCard({ task, onEdit, onDelete, onStatusChange }: TaskCardPro
             <span>{new Date(task.created_at).toLocaleDateString()}</span>
           </div>
         </div>
-        
+
         <div className="flex gap-2">
           {task.status !== 'completed' && (
             <Button

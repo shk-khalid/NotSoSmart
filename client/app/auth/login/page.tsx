@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/auth-context';
@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckSquare, Mail, Lock, Loader2 } from 'lucide-react';
-import { gsap } from 'gsap';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
@@ -20,17 +19,6 @@ export default function LoginPage() {
     email: '',
     password: '',
   });
-
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (cardRef.current) {
-      gsap.fromTo(cardRef.current,
-        { y: 50, opacity: 0, scale: 0.95 },
-        { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" }
-      );
-    }
-  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -58,7 +46,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream-blush via-warm-beige to-dusty-rose flex items-center justify-center p-4">
-      <Card ref={cardRef} className="w-full max-w-md bg-white/90 border-warm-beige shadow-lg">
+      <Card className="w-full max-w-md bg-white/90 border-warm-beige shadow-lg">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <div className="h-10 w-10 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-lg flex items-center justify-center">
