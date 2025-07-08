@@ -7,6 +7,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/contexts/auth-context';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Navigation } from '@/components/Navigation';
+import { PageLoader } from '@/components/PageLoader';
 import { usePathname } from 'next/navigation';
 
 export default function ClientRoot({ children }: { children: React.ReactNode }) {
@@ -30,6 +31,8 @@ export default function ClientRoot({ children }: { children: React.ReactNode }) 
             error:   { duration: 5000, iconTheme: { primary: '#ef4444', secondary: '#dbcbc1' } },
           }}
         />
+
+        <PageLoader />
 
         {isLanding || isAuthPage ? (
           // no nav, no guard

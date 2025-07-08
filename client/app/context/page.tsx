@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { ContextEntry, ContextSource } from '@/types';
 import { ContextForm } from '@/components/ContextForm';
 import { ContextList } from '@/components/ContextList';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare, TrendingUp, FileText, AlertCircle } from 'lucide-react';
 import todoService from '@/services/todo-service';
@@ -185,7 +186,7 @@ export default function ContextPage() {
           <ContextList
             contexts={contexts}
             onDelete={handleDeleteContext}
-            isLoading={isLoading}
+            isLoading={false}
           />
         </div>
       </div>

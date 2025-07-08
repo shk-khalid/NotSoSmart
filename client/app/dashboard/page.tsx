@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/auth-context';
 import { Task, Category, FilterOptions, TaskStatus } from '@/types';
 import { TaskCard } from '@/components/TaskCard';
 import { FilterBar } from '@/components/FilterBar';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -134,11 +135,8 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rich-mauve mx-auto mb-4"></div>
-          <p className="text-deep-plum">Loading your tasks...</p>
-        </div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <LoadingSpinner size="lg" text="Loading your tasks..." />
       </div>
     );
   }
