@@ -1,0 +1,36 @@
+@@ .. @@
+  .ring-focus {
+    @apply ring-[rgb(var(--ring-rgb))];
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar   { width:4px; height:4px }
+  ::-webkit-scrollbar-track { background:rgb(var(--background-rgb)) }
+  ::-webkit-scrollbar-thumb { background:rgb(var(--ring-rgb)); border-radius:var(--radius) }
+  ::-webkit-scrollbar-thumb:hover { background:rgb(var(--primary-rgb)) }
+  * { scrollbar-width:thin; scrollbar-color:rgb(var(--ring-rgb)) rgb(var(--background-rgb)) }
++
++  /* Custom slider styles */
++  .slider::-webkit-slider-thumb {
++    appearance: none;
++    height: 20px;
++    width: 20px;
++    border-radius: 50%;
++    background: #674b74;
++    cursor: pointer;
++    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
++    border: 2px solid white;
++  }
++
++  .slider::-moz-range-thumb {
++    height: 20px;
++    width: 20px;
++    border-radius: 50%;
++    background: #674b74;
++    cursor: pointer;
++    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
++    border: 2px solid white;
++  }
+ }
+
+@@ .. @@
