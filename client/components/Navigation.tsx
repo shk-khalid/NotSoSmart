@@ -40,10 +40,14 @@ export function Navigation() {
     try {
       await logout();
       toast.success('Logged out successfully');
-      router.replace('/');
     } catch {
       toast.error('Logout failed');
     }
+  };
+
+  const handleNavigation = (href: string) => {
+    router.push(href);
+    setMobileOpen(false);
   };
 
   if (!isAuthenticated) return null;
@@ -73,17 +77,40 @@ export function Navigation() {
   ];
 
   const NavLink = ({ href, label, icon: Icon, desc, isActive, mobile = false }: any) => {
+    if (mobile) {
+      return (
+        <button
+          onClick={() => handleNavigation(href)}
+          className={cn(
+            "flex flex-col items-center text-center gap-2 p-4 w-full rounded-xl transition-all duration-200",
+            isActive 
+              ? "bg-gradient-to-r from-rich-mauve/20 to-deep-plum/20 border border-rich-mauve/30" 
+              : "hover:bg-warm-beige/50"
+          )}
+        >
+          <Icon className={cn(
+            "h-6 w-6 transition-colors", 
+            isActive ? "text-deep-plum" : "text-rich-mauve"
+          )} />
+          <div className="flex flex-col">
+            <span className={cn(
+              "text-sm font-medium transition-colors", 
+              isActive ? "text-deep-plum" : "text-gray-700"
+            )}>
+              {label}
+            </span>
+            <span className="text-xs text-gray-500">{desc}</span>
+          </div>
+        </button>
+      );
+    }
+
     return (
       <Link
         href={href}
-        onClick={() => mobile && setMobileOpen(false)}
         className={cn(
-          "flex items-center transition-all duration-200",
-          mobile
-            ? "flex-col text-center gap-1 p-3 w-full rounded-lg"
-            : "px-3 py-2 gap-2 rounded-md hover:bg-gray-100",
-          isActive && !mobile && "bg-gradient-to-r from-rich-mauve/10 to-deep-plum/10 ring-1 ring-rich-mauve/20",
-          mobile && isActive && "bg-gradient-to-r from-rich-mauve/10 to-deep-plum/10"
+          "flex items-center px-4 py-2 gap-3 rounded-lg transition-all duration-200 hover:bg-gray-50",
+          isActive && "bg-gradient-to-r from-rich-mauve/10 to-deep-plum/10 ring-1 ring-rich-mauve/20"
         )}
       >
         <Icon className={cn(
@@ -97,9 +124,7 @@ export function Navigation() {
           )}>
             {label}
           </span>
-          {!mobile && (
-            <span className="text-xs text-gray-500">{desc}</span>
-          )}
+          <span className="text-xs text-gray-500">{desc}</span>
         </div>
       </Link>
     );
@@ -123,7 +148,7 @@ export function Navigation() {
         </Link>
 
         {/* Desktop Links */}
-        <div className="hidden lg:flex lg:space-x-1">
+        <div className="hidden lg:flex lg:space-x-2">
           {navItems.map(item => (
             <NavLink key={item.href} {...item} />
           ))}
@@ -161,51 +186,50 @@ export function Navigation() {
             </DropdownMenuTrigger>
             <DropdownMenuContent 
               align="end" 
-              className="w-64 bg-white border-warm-beige shadow-lg"
+              className="w-64 bg-white border-warm-beige shadow-xl rounded-xl"
             >
-              <div className="px-3 py-3 border-b border-warm-beige">
+              <div className="px-4 py-4 border-b border-warm-beige">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-full flex items-center justify-center text-white font-medium">
+                  <div className="h-12 w-12 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-full flex items-center justify-center text-white font-medium text-lg">
                     {user?.username?.charAt(0).toUpperCase() || 'U'}
                   </div>
                   <div className="flex flex-col min-w-0 flex-1">
-                    <p className="font-medium text-deep-plum">{user?.username}</p>
+                    <p className="font-semibold text-deep-plum">{user?.username}</p>
                     <p className="text-sm text-rich-mauve truncate">{user?.email}</p>
+                    <Badge variant="outline" className="mt-1 w-fit text-xs border-green-200 text-green-700 bg-green-50">
+                      Active
+                    </Badge>
                   </div>
                 </div>
               </div>
               
-              <div className="py-1">
-                <DropdownMenuItem asChild>
-                  <Link 
-                    href="/dashboard"
-                    className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-warm-beige/50"
-                  >
-                    <Home className="h-4 w-4 text-rich-mauve" />
-                    <span className="text-deep-plum">Dashboard</span>
-                  </Link>
+              <div className="py-2">
+                <DropdownMenuItem 
+                  onClick={() => router.push('/dashboard')}
+                  className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-warm-beige/50 rounded-lg mx-2"
+                >
+                  <Home className="h-4 w-4 text-rich-mauve" />
+                  <span className="text-deep-plum font-medium">Dashboard</span>
                 </DropdownMenuItem>
                 
-                <DropdownMenuItem asChild>
-                  <Link 
-                    href="/settings"
-                    className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-warm-beige/50"
-                  >
-                    <Settings className="h-4 w-4 text-rich-mauve" />
-                    <span className="text-deep-plum">Settings</span>
-                  </Link>
+                <DropdownMenuItem 
+                  onClick={() => router.push('/settings')}
+                  className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-warm-beige/50 rounded-lg mx-2"
+                >
+                  <Settings className="h-4 w-4 text-rich-mauve" />
+                  <span className="text-deep-plum font-medium">Settings</span>
                 </DropdownMenuItem>
               </div>
               
-              <DropdownMenuSeparator className="bg-warm-beige" />
+              <DropdownMenuSeparator className="bg-warm-beige mx-2" />
               
-              <div className="py-1">
+              <div className="py-2">
                 <DropdownMenuItem 
                   onClick={handleLogout}
-                  className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-red-50 text-red-600"
+                  className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-red-50 text-red-600 rounded-lg mx-2"
                 >
                   <LogOut className="h-4 w-4" />
-                  <span>Sign Out</span>
+                  <span className="font-medium">Sign Out</span>
                 </DropdownMenuItem>
               </div>
             </DropdownMenuContent>
@@ -222,22 +246,22 @@ export function Navigation() {
                 <Menu className="h-5 w-5 text-rich-mauve" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-72 bg-white border-warm-beige">
+            <SheetContent side="right" className="w-80 bg-gradient-to-br from-cream-blush to-warm-beige border-warm-beige">
               <div className="flex flex-col h-full">
                 {/* Mobile Header */}
                 <div className="flex items-center gap-3 pb-6 border-b border-warm-beige">
-                  <div className="h-10 w-10 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-full flex items-center justify-center text-white font-medium">
+                  <div className="h-12 w-12 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-full flex items-center justify-center text-white font-medium text-lg">
                     {user?.username?.charAt(0).toUpperCase() || 'U'}
                   </div>
                   <div className="flex flex-col min-w-0 flex-1">
-                    <p className="font-medium text-deep-plum">{user?.username}</p>
+                    <p className="font-semibold text-deep-plum">{user?.username}</p>
                     <p className="text-sm text-rich-mauve truncate">{user?.email}</p>
                   </div>
                 </div>
 
                 {/* Mobile Navigation */}
                 <div className="flex-1 py-6">
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {navItems.map(item => (
                       <NavLink key={item.href} {...item} mobile />
                     ))}
@@ -245,22 +269,21 @@ export function Navigation() {
                 </div>
 
                 {/* Mobile Footer */}
-                <div className="border-t border-warm-beige pt-4 space-y-2">
-                  <Link
-                    href="/settings"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-2 w-full p-3 rounded-lg hover:bg-warm-beige/50 transition-colors"
+                <div className="border-t border-warm-beige pt-4 space-y-3">
+                  <button
+                    onClick={() => handleNavigation('/settings')}
+                    className="flex items-center gap-3 w-full p-4 rounded-xl hover:bg-white/50 transition-colors"
                   >
                     <Settings className="h-5 w-5 text-rich-mauve" />
-                    <span className="text-deep-plum">Settings</span>
-                  </Link>
+                    <span className="text-deep-plum font-medium">Settings</span>
+                  </button>
                   
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-2 w-full p-3 rounded-lg hover:bg-red-50 text-red-600 transition-colors"
+                    className="flex items-center gap-3 w-full p-4 rounded-xl hover:bg-red-50 text-red-600 transition-colors"
                   >
                     <LogOut className="h-5 w-5" />
-                    <span>Sign Out</span>
+                    <span className="font-medium">Sign Out</span>
                   </button>
                 </div>
               </div>
