@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/auth-context';
+import { usePageLoading } from '@/hooks/use-page-loading';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -35,6 +37,7 @@ export function Navigation() {
   const pathname = usePathname();
   const { user, logout, isAuthenticated } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isPageLoading = usePageLoading();
 
   const handleLogout = async () => {
     try {
@@ -73,10 +76,23 @@ export function Navigation() {
   ];
 
   const NavLink = ({ href, label, icon: Icon, desc, isActive, mobile = false }: any) => {
+    const [isClicked, setIsClicked] = useState(false);
+
+    const handleClick = () => {
+      setIsClicked(true);
+      if (mobile) setMobileOpen(false);
+      setTimeout(() => setIsClicked(false), 300);
+    };
+
     return (
-      <Link
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ duration: 0.1 }}
+      >
+        <Link
         href={href}
-        onClick={() => mobile && setMobileOpen(false)}
+        onClick={handleClick}
         className={cn(
           "flex items-center transition-all duration-200",
           mobile
@@ -86,10 +102,15 @@ export function Navigation() {
           mobile && isActive && "bg-gradient-to-r from-rich-mauve/10 to-deep-plum/10"
         )}
       >
-        <Icon className={cn(
+        <motion.div
+          animate={isClicked ? { rotate: 360 } : { rotate: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Icon className={cn(
           "h-5 w-5 transition-colors", 
           isActive ? "text-deep-plum" : "text-rich-mauve"
         )} />
+        </motion.div>
         <div className="flex flex-col">
           <span className={cn(
             "text-sm font-medium transition-colors", 
@@ -101,7 +122,8 @@ export function Navigation() {
             <span className="text-xs text-gray-500">{desc}</span>
           )}
         </div>
-      </Link>
+        </Link>
+      </motion.div>
     );
   };
 
