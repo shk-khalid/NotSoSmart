@@ -5,7 +5,7 @@ import { Task, TaskStatus } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, Edit, Trash2, CheckCircle2, Circle, PlayCircle, Target, Tag } from 'lucide-react';
+import { Calendar, Clock, Edit, Trash2, CheckCircle2, Circle, PlayCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { gsap } from 'gsap';
 
@@ -22,7 +22,7 @@ export function TaskCard({ task, onEdit, onDelete, onStatusChange }: TaskCardPro
   const handleHover = () => {
     if (cardRef.current) {
       gsap.to(cardRef.current, {
-        y: -8,
+        y: -5,
         duration: 0.3,
         ease: "power2.out"
       });
@@ -79,34 +79,26 @@ export function TaskCard({ task, onEdit, onDelete, onStatusChange }: TaskCardPro
     <Card
       ref={cardRef}
       className={cn(
-        "group cursor-pointer bg-white/95 backdrop-blur-sm border-warm-beige shadow-lg hover:shadow-xl transition-all duration-300",
+        "group cursor-pointer",
         task.status === 'completed' && "opacity-75",
-        isOverdue && "border-red-300 bg-red-50/50"
+        isOverdue && "border-red-300 bg-red-50"
       )}
       onMouseEnter={handleHover}
       onMouseLeave={handleHoverOut}
     >
       <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
             {getStatusIcon(task.status)}
-            <div className="min-w-0 flex-1">
-              <CardTitle className={cn(
-                "text-base lg:text-lg font-semibold text-deep-plum",
-                task.status === 'completed' && "line-through text-gray-500"
-              )}>
-                {task.title}
-              </CardTitle>
-              {task.description && (
-                <CardDescription className="mt-1 text-sm text-rich-mauve line-clamp-2">
-                  {task.description}
-                </CardDescription>
-              )}
-            </div>
+            <CardTitle className={cn(
+              "text-base sm:text-lg font-semibold truncate",
+              task.status === 'completed' && "line-through text-gray-500"
+            )}>
+              {task.title}
+            </CardTitle>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Badge className={cn("text-xs shadow-sm", getPriorityColor(task.priority_score))}>
-              <Target className="h-3 w-3 mr-1" />
+          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+            <Badge className={cn("text-xs", getPriorityColor(task.priority_score))}>
               <span className="hidden sm:inline">{getPriorityLabel(task.priority_score)}</span>
               <span className="sm:hidden">{task.priority_score}</span>
             </Badge>
@@ -115,7 +107,7 @@ export function TaskCard({ task, onEdit, onDelete, onStatusChange }: TaskCardPro
                 variant="ghost"
                 size="sm"
                 onClick={() => onEdit(task)}
-                className="h-8 w-8 p-0 hover:bg-blue-100 text-blue-600"
+                className="h-7 w-7 sm:h-8 sm:w-8 p-0 hover:bg-blue-100"
               >
                 <Edit className="h-3 w-3" />
               </Button>
@@ -123,20 +115,23 @@ export function TaskCard({ task, onEdit, onDelete, onStatusChange }: TaskCardPro
                 variant="ghost"
                 size="sm"
                 onClick={() => onDelete(task.id)}
-                className="h-8 w-8 p-0 hover:bg-red-100 text-red-600"
+                className="h-7 w-7 sm:h-8 sm:w-8 p-0 hover:bg-red-100"
               >
                 <Trash2 className="h-3 w-3" />
               </Button>
             </div>
           </div>
         </div>
+        {task.description && (
+          <CardDescription className="mt-2 text-sm text-gray-600 line-clamp-2">
+            {task.description}
+          </CardDescription>
+        )}
       </CardHeader>
-      
-      <CardContent className="pt-0 space-y-4">
+      <CardContent className="pt-0 space-y-3">
         <div className="flex flex-wrap items-center gap-2">
           {task.category && (
-            <Badge variant="outline" className="text-xs border-rich-mauve text-rich-mauve bg-white/50">
-              <Tag className="h-3 w-3 mr-1" />
+            <Badge variant="outline" className="text-xs">
               {task.category.name}
             </Badge>
           )}
@@ -152,26 +147,25 @@ export function TaskCard({ task, onEdit, onDelete, onStatusChange }: TaskCardPro
           {task.deadline && (
             <div className={cn(
               "flex items-center gap-1",
-              isOverdue ? "text-red-600 font-medium" : "text-rich-mauve"
+              isOverdue ? "text-red-600" : "text-gray-500"
             )}>
               <Calendar className="h-3 w-3" />
-              <span>Due: {new Date(task.deadline).toLocaleDateString()}</span>
-              {isOverdue && <span className="text-red-600 font-bold">OVERDUE</span>}
+              <span>{new Date(task.deadline).toLocaleDateString()}</span>
             </div>
           )}
-          <div className="flex items-center gap-1 text-rich-mauve">
+          <div className="flex items-center gap-1 text-gray-500">
             <Clock className="h-3 w-3" />
-            <span>Created: {new Date(task.created_at).toLocaleDateString()}</span>
+            <span>{new Date(task.created_at).toLocaleDateString()}</span>
           </div>
         </div>
 
-        <div className="flex gap-2 pt-2 border-t border-warm-beige">
+        <div className="flex gap-2">
           {task.status !== 'completed' && (
             <Button
               variant="outline"
               size="sm"
               onClick={() => onStatusChange(task.id, 'completed')}
-              className="flex-1 h-9 text-xs border-green-200 text-green-700 hover:bg-green-50"
+              className="flex-1 h-8 text-xs"
             >
               <CheckCircle2 className="h-3 w-3 mr-1" />
               <span className="hidden sm:inline">Complete</span>
@@ -183,7 +177,7 @@ export function TaskCard({ task, onEdit, onDelete, onStatusChange }: TaskCardPro
               variant="outline"
               size="sm"
               onClick={() => onStatusChange(task.id, 'in_progress')}
-              className="flex-1 h-9 text-xs border-blue-200 text-blue-700 hover:bg-blue-50"
+              className="flex-1 h-8 text-xs"
             >
               <PlayCircle className="h-3 w-3 mr-1" />
               Start
@@ -194,7 +188,7 @@ export function TaskCard({ task, onEdit, onDelete, onStatusChange }: TaskCardPro
               variant="outline"
               size="sm"
               onClick={() => onStatusChange(task.id, 'pending')}
-              className="flex-1 h-9 text-xs border-gray-200 text-gray-700 hover:bg-gray-50"
+              className="flex-1 h-8 text-xs"
             >
               <Circle className="h-3 w-3 mr-1" />
               Reopen
