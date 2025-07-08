@@ -11,7 +11,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import {
@@ -19,9 +18,9 @@ import {
   MessageSquare,
   Menu,
   LogOut,
-  Settings,
+  ChevronDown,
   Home,
-  ChevronDown
+  User
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import CheckLogo from '@/public/logo.png';
@@ -105,87 +104,88 @@ export function Navigation() {
             Online
           </Badge>
 
-          {/* User Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className={baseBtnClasses}>
-                <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-full flex items-center justify-center text-white font-medium">
-                    {user?.username?.[0]?.toUpperCase() || 'U'}
-                  </div>
-                  <div className="hidden sm:flex flex-col items-start truncate">
-                    <span className="text-sm font-medium text-deep-plum">{user?.username}</span>
-                    <span className="text-xs text-rich-mauve">{user?.email}</span>
-                  </div>
-                </div>
-                <ChevronDown className="h-4 w-4 text-rich-mauve" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-64 bg-white border-warm-beige shadow-lg">
-              {/* Profile Preview */}
-              <div className="p-3 border-b border-warm-beige flex items-center gap-3">
-                <div className="h-10 w-10 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-full flex items-center justify-center text-white font-medium">
-                  {user?.username?.[0]?.toUpperCase() || 'U'}
-                </div>
-                <div className="flex flex-col truncate">
-                  <span className="font-medium text-deep-plum">{user?.username}</span>
-                  <span className="text-sm text-rich-mauve truncate">{user?.email}</span>
-                </div>
-              </div>
+          {/* Desktop Profile Dropdown – hidden on <lg */}
+          <div className="hidden lg:block">
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button variant="outline" className={baseBtnClasses}>
+        <div className="flex items-center gap-2">
+          <User className="h-5 w-5 text-rich-mauve" />
+          <span className="text-sm font-medium text-deep-plum">Profile</span>
+          <ChevronDown className="h-4 w-4 text-rich-mauve" />
+        </div>
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end" className="w-64 bg-white border-warm-beige shadow-lg">
+      {/* Profile Preview */}
+      <div className="p-3 border-b border-warm-beige flex items-center gap-3">
+        <div className="h-10 w-10 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-full flex items-center justify-center text-white font-medium">
+          {user?.username?.[0]?.toUpperCase() || 'U'}
+        </div>
+        <div className="flex flex-col truncate">
+          <span className="font-medium text-deep-plum">{user?.username}</span>
+          <span className="text-sm text-rich-mauve truncate">{user?.email}</span>
+        </div>
+      </div>
+      <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-red-600">
+        <LogOut className="h-4 w-4" />
+        <span>Sign Out</span>
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</div>
 
-              {/* Menu Actions */}
-              {NAV_ITEMS.concat([
-                { href: '/settings', label: 'Settings', icon: Settings },
-              ]).map(item => (
-                <DropdownMenuItem key={item.href} onClick={() => router.push(item.href)}>
-                  <div className="flex items-center gap-2">
-                    <item.icon className="h-4 w-4 text-rich-mauve" />
-                    <span className="text-deep-plum">{item.label}</span>
-                  </div>
-                </DropdownMenuItem>
-              ))}
-
-              <DropdownMenuSeparator className="bg-warm-beige" />
-
-              <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-red-600">
-                <LogOut className="h-4 w-4" />
-                <span>Sign Out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
 
           {/* Mobile Menu */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger asChild>
-              <Button size="sm" variant="outline" className={baseBtnClasses + ' lg:hidden p-2'}>
-                <Menu className="h-5 w-5 text-rich-mauve" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-64 bg-white border-warm-beige">
-              <div className="space-y-1">
-                {NAV_ITEMS.map(item =>
-                  renderNavItem(item, () => {
-                    setMobileOpen(false);
-                    router.push(item.href);
-                  })
-                )}
-              </div>
-              <div className="mt-4 border-t border-warm-beige pt-4 space-y-1">
-                <button
-                  onClick={() => { setMobileOpen(false); router.push('/settings'); }}
-                  className={baseBtnClasses}
-                >
-                  <Settings className="h-5 w-5 text-rich-mauve" /> Settings
-                </button>
-                <button
-                  onClick={() => { setMobileOpen(false); handleLogout(); }}
-                  className={baseBtnClasses + ' text-red-600 hover:bg-red-50'}
-                >
-                  <LogOut className="h-5 w-5" /> Sign Out
-                </button>
-              </div>
-            </SheetContent>
-          </Sheet>
+  <SheetTrigger asChild>
+    <Button size="sm" variant="outline" className={baseBtnClasses + ' lg:hidden p-2'}>
+      <Menu className="h-5 w-5 text-rich-mauve" />
+    </Button>
+  </SheetTrigger>
+
+  <SheetContent side="right" className="w-64 bg-white border-warm-beige flex flex-col">
+    <div className="p-4 border-b border-warm-beige flex items-center gap-3">
+      <div className="h-10 w-10 min-w-[2.5rem] bg-gradient-to-br from-rich-mauve to-deep-plum rounded-full flex items-center justify-center text-white font-medium">
+        {user?.username?.[0]?.toUpperCase() || 'U'}
+      </div>
+      <div className="flex flex-col truncate">
+        <span className="font-medium text-deep-plum">{user?.username}</span>
+        <span className="text-sm text-rich-mauve truncate">{user?.email}</span>
+      </div>
+    </div>
+
+    <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+      {NAV_ITEMS.map(item => (
+        <button
+          key={item.href}
+          onClick={() => {
+            setMobileOpen(false);
+            router.push(item.href);
+          }}
+          className={cn(baseBtnClasses, 'w-full justify-start')}
+        >
+          <item.icon className="h-5 w-5 text-rich-mauve" />
+          <span className="text-sm font-medium">{item.label}</span>
+        </button>
+      ))}
+    </nav>
+
+    <div className="p-4 border-t border-warm-beige">
+      <button
+        onClick={() => {
+          setMobileOpen(false);
+          handleLogout();
+        }}
+        className={cn(baseBtnClasses, 'w-full justify-start text-red-600 hover:bg-red-50')}
+      >
+        <LogOut className="h-5 w-5" />
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </SheetContent>
+</Sheet>
+
         </div>
       </div>
     </nav>
