@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { TaskForm } from '@/components/TaskForm';
 import { AISuggestionBox } from '@/components/AISuggestionBox';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Task, Category, AISuggestionInput, AISuggestionResponse } from '@/types';
 import todoService from '@/services/todo-service';
 import toast from 'react-hot-toast';
@@ -81,6 +82,14 @@ export default function CreateTaskPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {isLoading && (
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 shadow-xl">
+            <LoadingSpinner size="lg" text="Creating your task..." />
+          </div>
+        </div>
+      )}
+
       <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-900">Create New Task</h1>
         <p className="text-gray-600 mt-2">Add a new task with AI-powered enhancement</p>
