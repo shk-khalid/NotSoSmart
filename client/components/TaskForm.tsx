@@ -153,10 +153,10 @@ export function TaskForm({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cream-blush via-warm-beige to-dusty-rose py-8">
+    <div className="min-h-screen">
       <div className="max-w-4xl mx-auto px-4 space-y-6">
-        <Card className="bg-white/95 backdrop-blur-sm border-warm-beige shadow-xl">
-          <CardHeader className="bg-gradient-to-r from-cream-blush to-warm-beige border-b border-warm-beige">
+        <Card className="bg-white/95 backdrop-blur-sm border-warm-beige rounded-md shadow-xl">
+          <CardHeader className="bg-gradient-to-r from-cream-blush to-warm-beige rounded-t-md border-b">
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 bg-gradient-to-br from-rich-mauve to-deep-plum rounded-xl flex items-center justify-center shadow-md">
